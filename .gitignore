@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+venv/
+.venv/
+venv3/
+.idea/
