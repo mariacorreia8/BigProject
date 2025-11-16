@@ -121,10 +121,11 @@ class MainActivity : ComponentActivity() {
                             authViewModel = authViewModel,
                             client = client,
                             onPatientFound = { name, email, reading ->
-                                navController.navigate("patient_dashboard/${Uri.encode(name)}/${reading != null}")
+                                // PASSA EMAIL, não name!
+                                navController.navigate("patient_dashboard/${Uri.encode(email)}/${reading != null}")
                             },
                             onPatientNotFound = {
-                                navController.navigate("patient_dashboard/Desconhecido/true")
+                                navController.navigate("patient_dashboard/unknown/true")
                             }
                         )
                     }

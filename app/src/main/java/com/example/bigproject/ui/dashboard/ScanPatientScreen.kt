@@ -1,4 +1,3 @@
-// ui/dashboard/ScanPatientScreen.kt
 package com.example.bigproject.ui.dashboard
 
 import androidx.compose.foundation.layout.*
@@ -73,14 +72,20 @@ fun ScanPatientScreen(
                                 setBody(mapOf("email" to email.trim()))
                             }.body()
 
+                            // LOGS DE DEBUG (remove depois)
+                            println("API RESPONSE: $response")
+                            println("latestVital: ${response.latestVital}")
+
                             if (response.found && response.patient != null) {
                                 val reading = response.latestVital?.toVitalReading()
+                                println("VitalReading: $reading")
                                 onPatientFound(response.patient.name, response.patient.email, reading)
                             } else {
                                 onPatientNotFound()
                             }
                         } catch (e: Exception) {
                             error = "Erro: ${e.message}"
+                            e.printStackTrace()
                             onPatientNotFound()
                         } finally {
                             isLoading = false
@@ -100,7 +105,7 @@ fun ScanPatientScreen(
     }
 }
 
-// === MODELOS PARA A API (MESMOS DO MainActivity) ===
+// === MODELOS PARA A API ===
 @Serializable
 data class ApiPatientResponse(
     val found: Boolean,
@@ -113,6 +118,8 @@ data class PatientInfo(val id: String, val name: String, val email: String)
 
 @Serializable
 data class VitalData(
+    val id: String? = null,
+    val timestamp: Long? = null,
     val heartRate: Int,
     val spo2: Int,
     val stressLevel: Int,
@@ -121,9 +128,9 @@ data class VitalData(
 )
 
 fun VitalData.toVitalReading() = VitalReading(
-    id = "",
+    id = id ?: "",
     patientId = "",
-    timestamp = System.currentTimeMillis(),
+    timestamp = timestamp ?: System.currentTimeMillis(),
     heartRate = heartRate,
     spo2 = spo2,
     stressLevel = stressLevel,

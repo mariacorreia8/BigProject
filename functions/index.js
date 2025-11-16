@@ -48,6 +48,7 @@ async function verifyToken(req, res, next) {
 // ===========================
 
 // POST /auth/register
+//{"email": "joaquim", "password": "joaquim123", "name": "joaquim", "role": "Nurse"}
 app.post("/auth/register", async (req, res) => {
   try {
     const { email, password, name, role, linkedGarminDeviceId = null, patientIds = [] } = req.body;
@@ -203,7 +204,7 @@ app.get("/nurses/:id/patients", verifyToken, async (req, res) => {
 
 
 // POST /patients/:id/vitals
-//body{heartRate, spo2, stressLevel, deviceSource}
+//body{"heartRate": 45, "spo2": 78, "stressLevel": 89, "deviceSource": "device_1"}
 app.post("/patients/:id/vitals", verifyToken, async (req, res) => {
   try {
     const patientId = req.params.id;
@@ -473,7 +474,6 @@ app.post("/nurse/session/resolve", verifyToken, async (req, res) => {
   }
 });
 
-
 // POST /patients/search
 app.post("/patients/search", verifyToken, async (req, res) => {
   try {
@@ -502,14 +502,29 @@ app.post("/patients/search", verifyToken, async (req, res) => {
     const patientId = patientDoc.id;
     const patient = patientDoc.data();
 
-    // Busca última leitura
     const vitalSnapshot = await db.collection("vital_readings")
       .where("patientId", "==", patientId)
       .orderBy("timestamp", "desc")
       .limit(1)
       .get();
 
-    const latestVital = vitalSnapshot.empty ? null : vitalSnapshot.docs[0].data();
+    let latestVital = null;
+    if (!vitalSnapshot.empty) {
+      const doc = vitalSnapshot.docs[0];
+      const data = doc.data();
+      latestVital = {
+        id: doc.id,
+        timestamp: data.timestamp,
+        heartRate: data.heartRate,
+        spo2: data.spo2,
+        stressLevel: data.stressLevel,
+        bodyBattery: data.bodyBattery ?? null,
+        deviceSource: data.deviceSource
+      };
+    }
+
+    console.log("Paciente encontrado:", patientId);
+    console.log("Último vital:", latestVital);
 
     return res.json({
       found: true,
@@ -522,65 +537,10 @@ app.post("/patients/search", verifyToken, async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
+    console.error("Erro em /patients/search:", err);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-
-// NA TUA CLOUD FUNCTION
-app.post("/patients/search", verifyToken, async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ error: "Email required" });
-    if (req.role !== "Nurse") return res.status(403).json({ error: "Only nurses" });
-
-    const snapshot = await db.collection("users")
-      .where("email", "==", email)
-      .where("role", "==", "Patient")
-      .limit(1)
-      .get();
-
-    if (snapshot.empty) return res.json({ found: false });
-
-    const patientDoc = snapshot.docs[0];
-    const patient = patientDoc.data();
-    const patientId = patientDoc.id;
-
-    const vitalSnap = await db.collection("vital_readings")
-      .where("patientId", "==", patientId)
-      .orderBy("timestamp", "desc")
-      .limit(1)
-      .get();
-
-    const latestVital = vitalSnap.empty ? null : vitalSnap.docs[0].data();
-
-    return res.json({
-      found: true,
-      patient: { id: patientId, name: patient.name, email: patient.email },
-      latestVital
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Server error" });
-  }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // ===========================
 // EXPORTAR APP
