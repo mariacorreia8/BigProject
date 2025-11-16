@@ -1,56 +1,78 @@
-// MainActivity.kt
 package com.example.bigproject
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.bigproject.ui.auth.*
-import com.example.bigproject.ui.dashboard.DashboardContent
 import com.example.bigproject.ui.dashboard.NurseHomeScreen
+import com.example.bigproject.ui.dashboard.PatientDashboardScreen
+import com.example.bigproject.ui.dashboard.ScanPatientScreen
 import com.example.bigproject.ui.theme.BigProjectTheme
+import com.example.bigproject.models.VitalReading
+import com.google.firebase.BuildConfig
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import io.ktor.client.*
+import io.ktor.client.call.body
+import io.ktor.client.engine.android.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 class MainActivity : ComponentActivity() {
+
+    // CLIENTE KTOR
+    private val client = HttpClient(Android) {
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            })
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inicializa o Firebase (seguro)
         FirebaseApp.initializeApp(this)
-
         enableEdgeToEdge()
 
+        val auth = FirebaseAuth.getInstance()
+        val firestore = FirebaseFirestore.getInstance()
+
+        // ---- UI ----
         setContent {
+
             BigProjectTheme {
                 val navController = rememberNavController()
-                val authViewModel = remember { AuthViewModel() }
-
-                // Observa o estado de login
-                val loginState by authViewModel.loginState.collectAsState()
+                val authViewModel = remember { AuthViewModel(client) }
                 val userData by authViewModel.userData.collectAsState()
 
-                // Se já está logado, tenta buscar dados do user
-                LaunchedEffect(authViewModel.isUserLoggedIn()) {
-                    if (authViewModel.isUserLoggedIn()) {
-                        authViewModel.fetchUserData()
-                    }
-                }
-
-                // Determina a tela inicial
                 val startDestination = when {
                     !authViewModel.isUserLoggedIn() -> "auth_entry"
                     userData?.role == "Nurse" -> "nurse_home"
                     userData?.role == "Patient" -> "patient_dashboard"
-                    else -> "auth_entry" // fallback
+                    else -> "auth_entry"
                 }
 
                 NavHost(navController = navController, startDestination = startDestination) {
 
-                    // === TELA INICIAL (Bem-vindo!) ===
                     composable("auth_entry") {
                         AuthEntryScreen(
                             onLoginClick = { navController.navigate("login") },
@@ -58,97 +80,137 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    // === TELA DE LOGIN ===
                     composable("login") {
-                        LoginScreen(
-                            authViewModel = authViewModel,
-                            onLoginSuccess = {
-                                // Após login, verifica role
+                        LoginScreen(authViewModel = authViewModel, onLoginSuccess = {
+                            navController.navigate(
                                 when (userData?.role) {
-                                    "Nurse" -> navController.navigate("nurse_home") {
-                                        popUpTo("auth_entry") { inclusive = true }
-                                    }
-                                    "Patient" -> navController.navigate("patient_dashboard") {
-                                        popUpTo("auth_entry") { inclusive = true }
-                                    }
-                                    else -> navController.navigate("auth_entry")
+                                    "Nurse" -> "nurse_home"
+                                    "Patient" -> "patient_dashboard"
+                                    else -> "auth_entry"
                                 }
-                            }
-                        )
+                            ) { popUpTo("auth_entry") { inclusive = true } }
+                        })
                     }
 
-                    // === TELA DE REGISTO ===
                     composable("register") {
-                        RegisterScreen(
-                            authViewModel = authViewModel,
-                            onRegisterSuccess = {
+                        RegisterScreen(authViewModel = authViewModel, onRegisterSuccess = {
+                            navController.navigate(
                                 when (userData?.role) {
-                                    "Nurse" -> navController.navigate("nurse_home") {
-                                        popUpTo("auth_entry") { inclusive = true }
-                                    }
-                                    "Patient" -> navController.navigate("patient_dashboard") {
-                                        popUpTo("auth_entry") { inclusive = true }
-                                    }
-                                    else -> navController.navigate("auth_entry")
+                                    "Nurse" -> "nurse_home"
+                                    "Patient" -> "patient_dashboard"
+                                    else -> "auth_entry"
                                 }
-                            },
-                            onBackToLogin = { navController.navigateUp() }
-                        )
+                            ) { popUpTo("auth_entry") { inclusive = true } }
+                        }, onBackToLogin = { navController.navigateUp() })
                     }
 
-                    // === DASHBOARD DO ENFERMEIRO ===
                     composable("nurse_home") {
                         NurseHomeScreen(
                             nurseName = userData?.name ?: "Enfermeiro(a)",
-                            onScanQrClick = {
-                                // Por agora, vai direto ao dashboard do paciente
-                                // Depois: abre câmera para scan QR
-                                navController.navigate("patient_dashboard")
+                            authViewModel = authViewModel,
+                            onScanQrClick = { navController.navigate("scan_patient") },
+                            onLogoutClick = {
+                                authViewModel.logout()
+                                navController.navigate("auth_entry") { popUpTo(0) { inclusive = true } }
                             }
                         )
                     }
 
-                    // === DASHBOARD DO PACIENTE (com dados de teste) ===
-                    composable("patient_dashboard") {
-                        val sampleReadings = remember {
-                            listOf(
-                                com.example.bigproject.models.VitalReading(
-                                    id = "1",
-                                    patientId = "p1",
-                                    timestamp = System.currentTimeMillis() - 60000L * 3,
-                                    heartRate = 72,
-                                    spo2 = 97,
-                                    stressLevel = 30,
-                                    bodyBattery = 80,
-                                    deviceSource = "Garmin"
-                                ),
-                                com.example.bigproject.models.VitalReading(
-                                    id = "2",
-                                    patientId = "p1",
-                                    timestamp = System.currentTimeMillis() - 60000L * 2,
-                                    heartRate = 78,
-                                    spo2 = 96,
-                                    stressLevel = 40,
-                                    bodyBattery = 75,
-                                    deviceSource = "Garmin"
-                                ),
-                                com.example.bigproject.models.VitalReading(
-                                    id = "3",
-                                    patientId = "p1",
-                                    timestamp = System.currentTimeMillis() - 60000L,
-                                    heartRate = 80,
-                                    spo2 = 98,
-                                    stressLevel = 50,
-                                    bodyBattery = 70,
-                                    deviceSource = "Garmin"
-                                )
-                            )
+                    composable("scan_patient") {
+                        ScanPatientScreen(
+                            authViewModel = authViewModel,
+                            client = client,
+                            onPatientFound = { name, email, reading ->
+                                navController.navigate("patient_dashboard/${Uri.encode(name)}/${reading != null}")
+                            },
+                            onPatientNotFound = {
+                                navController.navigate("patient_dashboard/Desconhecido/true")
+                            }
+                        )
+                    }
+
+                    composable(
+                        route = "patient_dashboard/{patientName}/{hasData}",
+                        arguments = listOf(
+                            navArgument("patientName") { type = androidx.navigation.NavType.StringType },
+                            navArgument("hasData") { type = androidx.navigation.NavType.BoolType }
+                        )
+                    ) { backStackEntry ->
+                        val encodedName = backStackEntry.arguments?.getString("patientName") ?: "Paciente"
+                        val patientName = Uri.decode(encodedName)
+                        val hasData = backStackEntry.arguments?.getBoolean("hasData") ?: false
+
+                        var latestReading by remember { mutableStateOf<VitalReading?>(null) }
+                        val scope = rememberCoroutineScope()
+
+                        LaunchedEffect(patientName, hasData) {
+                            if (hasData && patientName != "Desconhecido") {
+                                scope.launch {
+                                    try {
+                                        val token = authViewModel.getIdToken() ?: return@launch // CORRIGIDO!
+                                        val response: ApiPatientResponse = client.post("http://10.0.2.2:5001/bigproject-4a536/us-central1/api/patients/search") {
+                                            headers { append("Authorization", "Bearer $token") }
+                                            contentType(ContentType.Application.Json)
+                                            setBody(mapOf("email" to patientName))
+                                        }.body()
+                                        latestReading = response.latestVital?.toVitalReading()
+                                    } catch (e: Exception) {
+                                        latestReading = null
+                                    }
+                                }
+                            }
                         }
 
-                        DashboardContent(readings = sampleReadings)
+                        PatientDashboardScreen(
+                            patientName = patientName,
+                            latestReading = latestReading,
+                            noDataMessage = if (!hasData || latestReading == null) "Sem dados introduzidos" else null,
+                            onExitClick = {
+                                navController.navigate("nurse_home") {
+                                    popUpTo("patient_dashboard") { inclusive = true }
+                                }
+                            }
+                        )
                     }
                 }
             }
         }
     }
+
+    override fun onDestroy() {
+        client.close()
+        super.onDestroy()
+    }
+
 }
+
+// === MODELOS DO KTOR ===
+@Serializable
+data class ApiPatientResponse(
+    val found: Boolean,
+    val patient: PatientInfo? = null,
+    val latestVital: VitalData? = null
+)
+
+@Serializable
+data class PatientInfo(val id: String, val name: String, val email: String)
+
+@Serializable
+data class VitalData(
+    val heartRate: Int,
+    val spo2: Int,
+    val stressLevel: Int,
+    val bodyBattery: Int? = null,
+    val deviceSource: String
+)
+
+fun VitalData.toVitalReading() = VitalReading(
+    id = "",
+    patientId = "",
+    timestamp = System.currentTimeMillis(),
+    heartRate = heartRate,
+    spo2 = spo2,
+    stressLevel = stressLevel,
+    bodyBattery = bodyBattery ?: 0,
+    deviceSource = deviceSource
+)

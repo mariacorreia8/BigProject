@@ -203,6 +203,7 @@ app.get("/nurses/:id/patients", verifyToken, async (req, res) => {
 
 
 // POST /patients/:id/vitals
+//body{heartRate, spo2, stressLevel, deviceSource}
 app.post("/patients/:id/vitals", verifyToken, async (req, res) => {
   try {
     const patientId = req.params.id;
@@ -213,13 +214,13 @@ app.post("/patients/:id/vitals", verifyToken, async (req, res) => {
       return res.status(403).json({ error: "Not authorized" });
     }
 
-    if (requesterRole === "Nurse" && requesterUid !== patientId) {
+    /*if (requesterRole === "Nurse" && requesterUid !== patientId) {
       const nurseDoc = await db.collection("users").doc(requesterUid).get();
       const nursePatientIds = nurseDoc.data()?.patientIds || [];
       if (!nursePatientIds.includes(patientId)) {
         return res.status(403).json({ error: "Nurse not authorized for this patient" });
       }
-    }
+    }*/
 
     const { heartRate, spo2, stressLevel, bodyBattery = null, deviceSource } = req.body;
     if (!heartRate || !spo2 || !stressLevel || !deviceSource) {
@@ -471,6 +472,104 @@ app.post("/nurse/session/resolve", verifyToken, async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+// POST /patients/search
+app.post("/patients/search", verifyToken, async (req, res) => {
+  try {
+    const { email } = req.body;
+    const requesterRole = req.role;
+
+    if (requesterRole !== "Nurse") {
+      return res.status(403).json({ error: "Only nurses can search patients" });
+    }
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    const userSnapshot = await db.collection("users")
+      .where("email", "==", email)
+      .where("role", "==", "Patient")
+      .limit(1)
+      .get();
+
+    if (userSnapshot.empty) {
+      return res.json({ found: false });
+    }
+
+    const patientDoc = userSnapshot.docs[0];
+    const patientId = patientDoc.id;
+    const patient = patientDoc.data();
+
+    // Busca última leitura
+    const vitalSnapshot = await db.collection("vital_readings")
+      .where("patientId", "==", patientId)
+      .orderBy("timestamp", "desc")
+      .limit(1)
+      .get();
+
+    const latestVital = vitalSnapshot.empty ? null : vitalSnapshot.docs[0].data();
+
+    return res.json({
+      found: true,
+      patient: {
+        id: patientId,
+        name: patient.name,
+        email: patient.email
+      },
+      latestVital
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// NA TUA CLOUD FUNCTION
+app.post("/patients/search", verifyToken, async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email required" });
+    if (req.role !== "Nurse") return res.status(403).json({ error: "Only nurses" });
+
+    const snapshot = await db.collection("users")
+      .where("email", "==", email)
+      .where("role", "==", "Patient")
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) return res.json({ found: false });
+
+    const patientDoc = snapshot.docs[0];
+    const patient = patientDoc.data();
+    const patientId = patientDoc.id;
+
+    const vitalSnap = await db.collection("vital_readings")
+      .where("patientId", "==", patientId)
+      .orderBy("timestamp", "desc")
+      .limit(1)
+      .get();
+
+    const latestVital = vitalSnap.empty ? null : vitalSnap.docs[0].data();
+
+    return res.json({
+      found: true,
+      patient: { id: patientId, name: patient.name, email: patient.email },
+      latestVital
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
+
+
+
+
+
 
 
 

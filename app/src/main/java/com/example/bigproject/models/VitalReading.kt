@@ -4,12 +4,12 @@ import java.sql.Timestamp
 import javax.xml.transform.Source
 
 data class VitalReading(
-    val id: String,
-    val patientId: String,
-    val timestamp: Long,
-    val heartRate: Int,
-    val spo2: Int,
-    val stressLevel: Int,
-    val bodyBattery: Int? = null,
-    val deviceSource: String
+    val id: String = "",
+    val patientId: String = "",
+    val timestamp: Long = 0L,
+    val heartRate: Int = 0,
+    val spo2: Int = 0,
+    val stressLevel: Int = 0,
+    val bodyBattery: Int = 0,
+    val deviceSource: String = ""
 )
