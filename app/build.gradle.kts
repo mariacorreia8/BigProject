@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.dagger.hilt)
+    id("kotlin-kapt")
     id("com.google.gms.google-services")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
 }
@@ -38,6 +40,9 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    kapt {
+        correctErrorTypes = true
     }
 }
 
@@ -78,5 +83,9 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.5")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("androidx.security:security-crypto:1.0.0")
 
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 }
