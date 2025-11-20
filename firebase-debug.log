@@ -1,0 +1,524 @@
+[debug] [2025-11-20T13:06:58.423Z] ----------------------------------------------------------------------
+[debug] [2025-11-20T13:06:58.424Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ricar\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start
+[debug] [2025-11-20T13:06:58.424Z] CLI Version:   14.25.1
+[debug] [2025-11-20T13:06:58.424Z] Platform:      win32
+[debug] [2025-11-20T13:06:58.424Z] Node Version:  v22.16.0
+[debug] [2025-11-20T13:06:58.425Z] Time:          Thu Nov 20 2025 13:06:58 GMT+0000 (Hora padrão da Europa Ocidental)
+[debug] [2025-11-20T13:06:58.425Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-11-20T13:06:58.535Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] Failed to authenticate, have you run firebase login?
+[warn] !  emulators: You are not currently authenticated so some features may not work correctly. Please run firebase login to authenticate the CLI. 
+[debug] [2025-11-20T13:06:58.593Z] openjdk version "17.0.14" 2025-01-21 LTS
+OpenJDK Runtime Environment Microsoft-10800295 (build 17.0.14+7-LTS)
+
+[debug] [2025-11-20T13:06:58.594Z] OpenJDK 64-Bit Server VM Microsoft-10800295 (build 17.0.14+7-LTS, mixed mode, sharing)
+
+[debug] [2025-11-20T13:06:58.611Z] Parsed Java major version: 17
+[warn] !!  emulators: firebase-tools will drop support for Java version < 21 soon in firebase-tools@15. Please install a JDK at version 21 or above to get a compatible runtime. 
+[info] i  emulators: Starting emulators: auth, functions, firestore, database, extensions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: auth, functions, firestore, database, extensions"}}
+[debug] [2025-11-20T13:06:58.613Z] No OAuth tokens found
+[debug] [2025-11-20T13:06:58.613Z] No OAuth tokens found
+[debug] [2025-11-20T13:06:58.613Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-20T13:06:58.613Z] Unable to check that https://cloudresourcemanager.googleapis.com is enabled on bigproject-4a536. Calls to it will fail if it is not enabled
+[debug] [2025-11-20T13:06:58.613Z] No OAuth tokens found
+[debug] [2025-11-20T13:06:58.613Z] No OAuth tokens found
+[debug] [2025-11-20T13:06:58.614Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[error] !!  extensions: Unable to look up project number for bigproject-4a536.
+ If this is a real project, ensure that you are logged in and have access to it.
+ If this is a fake project, please use a project ID starting with 'demo-' to skip production calls.
+ Continuing with a fake project number - secrets and other features that require production access may behave unexpectedly. {"metadata":{"emulator":{"name":"extensions"},"message":"Unable to look up project number for bigproject-4a536.\n If this is a real project, ensure that you are logged in and have access to it.\n If this is a fake project, please use a project ID starting with 'demo-' to skip production calls.\n Continuing with a fake project number - secrets and other features that require production access may behave unexpectedly."}}
+[debug] [2025-11-20T13:06:58.623Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-20T13:06:58.623Z] [auth] Authentication Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-20T13:06:58.623Z] [firestore] Firestore Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-20T13:06:58.623Z] [firestore.websocket] websocket server for firestore only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-20T13:06:58.623Z] [database] Database Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-20T13:06:58.623Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"auth":[{"address":"127.0.0.1","family":"IPv4","port":9099}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":8080}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9150}],"database":[{"address":"127.0.0.1","family":"IPv4","port":9000}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2025-11-20T13:06:58.625Z] Emulator locator file path: C:\Users\ricar\AppData\Local\Temp\hub-bigproject-4a536.json
+[debug] [2025-11-20T13:06:58.625Z] [hub] writing locator at C:\Users\ricar\AppData\Local\Temp\hub-bigproject-4a536.json
+[debug] [2025-11-20T13:06:58.628Z] [Extensions] Started Extensions emulator, this is a noop.
+[debug] [2025-11-20T13:06:58.631Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-20T13:06:58.631Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-20T13:06:58.631Z] [tasks] Cloud Tasks Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-11-20T13:06:58.631Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"auth":[{"address":"127.0.0.1","family":"IPv4","port":9099}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":8080}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9150}],"database":[{"address":"127.0.0.1","family":"IPv4","port":9000}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] !  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: apphosting, hosting, pubsub, storage, dataconnect {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mapphosting, hosting, pubsub, storage, dataconnect\u001b[22m"}}
+[debug] [2025-11-20T13:06:58.632Z] No OAuth tokens found
+[debug] [2025-11-20T13:06:58.633Z] No OAuth tokens found
+[debug] [2025-11-20T13:06:58.633Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-20T13:06:58.633Z] Failed to get Admin SDK config for bigproject-4a536, falling back to cache Failed to get Admin SDK for Firebase project bigproject-4a536. Please make sure the project exists and your account has permission to access it. {"name":"FirebaseError","children":[],"exit":2,"message":"Failed to get Admin SDK for Firebase project bigproject-4a536. Please make sure the project exists and your account has permission to access it.","original":{"name":"FirebaseError","children":[],"exit":1,"message":"Failed to authenticate, have you run \u001b[1mfirebase login\u001b[22m?","original":{},"status":500},"status":500}
+[warn] !  functions: Unable to fetch project Admin SDK configuration, Admin SDK behavior in Cloud Functions emulator may be incorrect. {"metadata":{"emulator":{"name":"functions"},"message":"Unable to fetch project Admin SDK configuration, Admin SDK behavior in Cloud Functions emulator may be incorrect."}}
+[debug] [2025-11-20T13:06:58.640Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-20T13:06:58.640Z] Ignoring unsupported arg: single_project_mode_error {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: single_project_mode_error"}}
+[debug] [2025-11-20T13:06:58.640Z] Starting Firestore Emulator with command {"binary":"java","args":["-Dgoogle.cloud_firestore.debug_log_level=FINE","-Duser.language=en","-jar","C:\\Users\\ricar\\.cache\\firebase\\emulators\\cloud-firestore-emulator-v1.19.8.jar","--host","127.0.0.1","--port",8080,"--websocket_port",9150,"--project_id","bigproject-4a536","--rules","C:\\BigProject\\firestore.rules","--single_project_mode",true,"--functions_emulator","127.0.0.1:5001"],"optionalArgs":["port","webchannel_port","host","rules","websocket_port","functions_emulator","seed_from_export","project_id","single_project_mode"],"joinArgs":false,"shell":false,"port":8080} {"metadata":{"emulator":{"name":"firestore"},"message":"Starting Firestore Emulator with command {\"binary\":\"java\",\"args\":[\"-Dgoogle.cloud_firestore.debug_log_level=FINE\",\"-Duser.language=en\",\"-jar\",\"C:\\\\Users\\\\ricar\\\\.cache\\\\firebase\\\\emulators\\\\cloud-firestore-emulator-v1.19.8.jar\",\"--host\",\"127.0.0.1\",\"--port\",8080,\"--websocket_port\",9150,\"--project_id\",\"bigproject-4a536\",\"--rules\",\"C:\\\\BigProject\\\\firestore.rules\",\"--single_project_mode\",true,\"--functions_emulator\",\"127.0.0.1:5001\"],\"optionalArgs\":[\"port\",\"webchannel_port\",\"host\",\"rules\",\"websocket_port\",\"functions_emulator\",\"seed_from_export\",\"project_id\",\"single_project_mode\"],\"joinArgs\":false,\"shell\":false,\"port\":8080}"}}
+[info] i  firestore: Firestore Emulator logging to firestore-debug.log {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator logging to \u001b[1mfirestore-debug.log\u001b[22m"}}
+[debug] [2025-11-20T13:06:59.415Z] Nov 20, 2025 1:06:59 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+INFO: Started WebSocket server on ws://127.0.0.1:9150
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 20, 2025 1:06:59 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\r\nINFO: Started WebSocket server on ws://127.0.0.1:9150\r\n"}}
+[debug] [2025-11-20T13:06:59.449Z] API endpoint: http:// {"metadata":{"emulator":{"name":"firestore"},"message":"API endpoint: http://"}}
+[debug] [2025-11-20T13:06:59.449Z] 127.0.0.1:8080
+If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+
+   export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+
+If you are running a Firestore in Datastore Mode project, run:
+
+   export DATASTORE_EMULATOR_HOST=127.0.0.1:8080
+
+Note: Support for Datastore Mode is in preview. If you encounter any bugs please file at https://github.com/firebase/firebase-tools/issues.
+Dev App Server is now running.
+
+ {"metadata":{"emulator":{"name":"firestore"},"message":"127.0.0.1:8080\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\r\n\n   export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080\n\nIf you are running a Firestore in Datastore Mode project, run:\r\n\n   export DATASTORE_EMULATOR_HOST=127.0.0.1:8080\n\nNote: Support for Datastore Mode is in preview. If you encounter any bugs please file at https://github.com/firebase/firebase-tools/issues.\r\nDev App Server is now running.\n\r\n"}}
+[info] +  firestore: Firestore Emulator UI websocket is running on 9150. {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator UI websocket is running on 9150."}}
+[debug] [2025-11-20T13:06:59.465Z] No OAuth tokens found
+[debug] [2025-11-20T13:06:59.465Z] No OAuth tokens found
+[debug] [2025-11-20T13:06:59.465Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-20T13:06:59.465Z] Failed to authenticate, have you run firebase login? (original: Could not load the default credentials. Browse to https://cloud.google.com/docs/authentication/getting-started for more information.)
+[debug] [2025-11-20T13:06:59.465Z] Failed to retrieve default database instance: {"name":"FirebaseError","children":[],"exit":2,"message":"Failed to get Firebase project bigproject-4a536. Please make sure the project exists and your account has permission to access it.","original":{"name":"FirebaseError","children":[],"exit":1,"message":"Failed to authenticate, have you run \u001b[1mfirebase login\u001b[22m?","original":{},"status":500},"status":500} {"metadata":{"emulator":{"name":"database"},"message":"Failed to retrieve default database instance: {\"name\":\"FirebaseError\",\"children\":[],\"exit\":2,\"message\":\"Failed to get Firebase project bigproject-4a536. Please make sure the project exists and your account has permission to access it.\",\"original\":{\"name\":\"FirebaseError\",\"children\":[],\"exit\":1,\"message\":\"Failed to authenticate, have you run \\u001b[1mfirebase login\\u001b[22m?\",\"original\":{},\"status\":500},\"status\":500}"}}
+[debug] [2025-11-20T13:06:59.465Z] database rules config:  []
+[warn] !  database: Did not find a Realtime Database rules file specified in a firebase.json config file. The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration. {"metadata":{"emulator":{"name":"database"},"message":"Did not find a Realtime Database rules file specified in a firebase.json config file. The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration."}}
+[debug] [2025-11-20T13:06:59.466Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: projectId"}}
+[debug] [2025-11-20T13:06:59.466Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-11-20T13:06:59.466Z] Ignoring unsupported arg: rules {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: rules"}}
+[debug] [2025-11-20T13:06:59.466Z] Starting Database Emulator with command {"binary":"java","args":["-Duser.language=en","-jar","C:\\Users\\ricar\\.cache\\firebase\\emulators\\firebase-database-emulator-v4.11.2.jar","--host","127.0.0.1","--port",9000,"--single_project_mode","Warning","--functions_emulator_host","127.0.0.1","--functions_emulator_port",5001],"optionalArgs":["port","host","functions_emulator_port","functions_emulator_host","single_project_mode"],"joinArgs":false,"shell":false,"port":9000} {"metadata":{"emulator":{"name":"database"},"message":"Starting Database Emulator with command {\"binary\":\"java\",\"args\":[\"-Duser.language=en\",\"-jar\",\"C:\\\\Users\\\\ricar\\\\.cache\\\\firebase\\\\emulators\\\\firebase-database-emulator-v4.11.2.jar\",\"--host\",\"127.0.0.1\",\"--port\",9000,\"--single_project_mode\",\"Warning\",\"--functions_emulator_host\",\"127.0.0.1\",\"--functions_emulator_port\",5001],\"optionalArgs\":[\"port\",\"host\",\"functions_emulator_port\",\"functions_emulator_host\",\"single_project_mode\"],\"joinArgs\":false,\"shell\":false,\"port\":9000}"}}
+[info] i  database: Database Emulator logging to database-debug.log {"metadata":{"emulator":{"name":"database"},"message":"Database Emulator logging to \u001b[1mdatabase-debug.log\u001b[22m"}}
+[debug] [2025-11-20T13:07:00.154Z] 13:07:00.152 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+ {"metadata":{"emulator":{"name":"database"},"message":"13:07:00.152 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started\r\n"}}
+[debug] [2025-11-20T13:07:00.271Z] 13:07:00.270 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
+ {"metadata":{"emulator":{"name":"database"},"message":"13:07:00.270 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000\r\n"}}
+[debug] [2025-11-20T13:07:03.406Z] [Extensions] Connecting Extensions emulator, this is a noop.
+[info] i  functions: Watching "C:\BigProject\functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"C:\\BigProject\\functions\" for Cloud Functions..."}}
+[debug] [2025-11-20T13:07:03.410Z] Validating nodejs source
+[warn] !  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] !  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2025-11-20T13:07:04.005Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "firebase-admin": "^12.7.0",
+    "firebase-functions": "^6.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-11-20T13:07:04.005Z] Building nodejs source
+[debug] [2025-11-20T13:07:04.005Z] Failed to find version of module node: reached end of search path C:\BigProject\functions\node_modules
+[info] +  functions: Using node@22 from host. 
+[debug] [2025-11-20T13:07:04.007Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-11-20T13:07:04.015Z] Found firebase-functions binary at 'C:\BigProject\functions\node_modules\.bin\firebase-functions'
+[debug] [2025-11-20T13:07:04.038Z] Nov 20, 2025 1:07:04 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 20, 2025 1:07:04 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\r\nINFO: Connected to new websocket client\r\n"}}
+[info] Serving at port 8382
+
+[debug] [2025-11-20T13:07:04.445Z] Got response from /__/functions.yaml {"endpoints":{"api":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"api"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] +  functions: Loaded functions definitions from source: api. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: api."}}
+[info] +  functions[us-central1-api]: http function initialized (http://127.0.0.1:5001/bigproject-4a536/us-central1/api). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/bigproject-4a536/us-central1/api)."}}
+[debug] [2025-11-20T13:07:08.480Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: . If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌────────────────┬────────────────┬──────────────────────────────────┐
+│ Emulator       │ Host:Port      │ View in Emulator UI              │
+├────────────────┼────────────────┼──────────────────────────────────┤
+│ Authentication │ 127.0.0.1:9099 │ http://127.0.0.1:4000/auth       │
+├────────────────┼────────────────┼──────────────────────────────────┤
+│ Functions      │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions  │
+├────────────────┼────────────────┼──────────────────────────────────┤
+│ Firestore      │ 127.0.0.1:8080 │ http://127.0.0.1:4000/firestore  │
+├────────────────┼────────────────┼──────────────────────────────────┤
+│ Database       │ 127.0.0.1:9000 │ http://127.0.0.1:4000/database   │
+├────────────────┼────────────────┼──────────────────────────────────┤
+│ Extensions     │ 127.0.0.1:5001 │ http://127.0.0.1:4000/extensions │
+└────────────────┴────────────────┴──────────────────────────────────┘
+  Emulator Hub host: 127.0.0.1 port: 4400
+  Other reserved ports: 4500, 9150
+┌─────────────────────────┬───────────────┬─────────────────────┐
+│ Extension Instance Name │ Extension Ref │ View in Emulator UI │
+└─────────────────────────┴───────────────┴─────────────────────┘
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[warn] !  emulators: firebase-tools will drop support for Java version < 21 soon in firebase-tools@15. Please install a JDK at version 21 or above to get a compatible runtime. 
+[debug] [2025-11-20T13:07:38.288Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/register-2025-11-20T13:07:38.288Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:07:38.288Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/register-2025-11-20T13:07:38.288Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:07:38.289Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/register --> us-central1-api
+[debug] [2025-11-20T13:07:38.289Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:07:38.289Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/register, mapping to path=/auth/register {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/register, mapping to path=/auth/register"}}
+[debug] [2025-11-20T13:07:38.298Z] [worker-pool] addWorker(us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] addWorker(us-central1-api)"}}
+[debug] [2025-11-20T13:07:38.298Z] [worker-pool] Adding worker with key us-central1-api, total=1 {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] Adding worker with key us-central1-api, total=1"}}
+[debug] [2025-11-20T13:07:39.104Z] [runtime-status] [7520] Resolved module firebase-admin {"declared":true,"installed":true,"version":"12.7.0","resolution":"C:\\BigProject\\functions\\node_modules\\firebase-admin\\lib\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] Resolved module firebase-admin {\"declared\":true,\"installed\":true,\"version\":\"12.7.0\",\"resolution\":\"C:\\\\BigProject\\\\functions\\\\node_modules\\\\firebase-admin\\\\lib\\\\index.js\"}"}}
+[debug] [2025-11-20T13:07:39.104Z] [runtime-status] [7520] Resolved module firebase-functions {"declared":true,"installed":true,"version":"6.6.0","resolution":"C:\\BigProject\\functions\\node_modules\\firebase-functions\\lib\\v2\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"6.6.0\",\"resolution\":\"C:\\\\BigProject\\\\functions\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\index.js\"}"}}
+[debug] [2025-11-20T13:07:39.105Z] [runtime-status] [7520] Outgoing network have been stubbed. [{"name":"http","status":"mocked"},{"name":"http","status":"mocked"},{"name":"https","status":"mocked"},{"name":"https","status":"mocked"},{"name":"net","status":"mocked"}] {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] Outgoing network have been stubbed. [{\"name\":\"http\",\"status\":\"mocked\"},{\"name\":\"http\",\"status\":\"mocked\"},{\"name\":\"https\",\"status\":\"mocked\"},{\"name\":\"https\",\"status\":\"mocked\"},{\"name\":\"net\",\"status\":\"mocked\"}]"}}
+[debug] [2025-11-20T13:07:39.105Z] [runtime-status] [7520] Resolved module firebase-functions {"declared":true,"installed":true,"version":"6.6.0","resolution":"C:\\BigProject\\functions\\node_modules\\firebase-functions\\lib\\v2\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"6.6.0\",\"resolution\":\"C:\\\\BigProject\\\\functions\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\index.js\"}"}}
+[debug] [2025-11-20T13:07:39.354Z] [runtime-status] [7520] Checked functions.config() {"config":{}} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] Checked functions.config() {\"config\":{}}"}}
+[debug] [2025-11-20T13:07:39.354Z] [runtime-status] [7520] firebase-functions has been stubbed. {"functionsResolution":{"declared":true,"installed":true,"version":"6.6.0","resolution":"C:\\BigProject\\functions\\node_modules\\firebase-functions\\lib\\v2\\index.js"}} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] firebase-functions has been stubbed. {\"functionsResolution\":{\"declared\":true,\"installed\":true,\"version\":\"6.6.0\",\"resolution\":\"C:\\\\BigProject\\\\functions\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\index.js\"}}"}}
+[debug] [2025-11-20T13:07:39.355Z] [runtime-status] [7520] Resolved module firebase-functions {"declared":true,"installed":true,"version":"6.6.0","resolution":"C:\\BigProject\\functions\\node_modules\\firebase-functions\\lib\\v2\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"6.6.0\",\"resolution\":\"C:\\\\BigProject\\\\functions\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\index.js\"}"}}
+[debug] [2025-11-20T13:07:39.361Z] [runtime-status] [7520] Resolved module firebase-admin {"declared":true,"installed":true,"version":"12.7.0","resolution":"C:\\BigProject\\functions\\node_modules\\firebase-admin\\lib\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] Resolved module firebase-admin {\"declared\":true,\"installed\":true,\"version\":\"12.7.0\",\"resolution\":\"C:\\\\BigProject\\\\functions\\\\node_modules\\\\firebase-admin\\\\lib\\\\index.js\"}"}}
+[debug] [2025-11-20T13:07:39.362Z] [runtime-status] [7520] Resolved module firebase-functions {"declared":true,"installed":true,"version":"6.6.0","resolution":"C:\\BigProject\\functions\\node_modules\\firebase-functions\\lib\\v2\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"6.6.0\",\"resolution\":\"C:\\\\BigProject\\\\functions\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\index.js\"}"}}
+[debug] [2025-11-20T13:07:39.363Z] [runtime-status] [7520] firebase-admin has been stubbed. {"adminResolution":{"declared":true,"installed":true,"version":"12.7.0","resolution":"C:\\BigProject\\functions\\node_modules\\firebase-admin\\lib\\index.js"}} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] firebase-admin has been stubbed. {\"adminResolution\":{\"declared\":true,\"installed\":true,\"version\":\"12.7.0\",\"resolution\":\"C:\\\\BigProject\\\\functions\\\\node_modules\\\\firebase-admin\\\\lib\\\\index.js\"}}"}}
+[debug] [2025-11-20T13:07:39.469Z] [runtime-status] [7520] initializeApp(DEFAULT) {"storageBucket":"bigproject-4a536.appspot.com","databaseURL":"http://127.0.0.1:9000/?ns=bigproject-4a536","projectId":"bigproject-4a536"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] initializeApp(DEFAULT) {\"storageBucket\":\"bigproject-4a536.appspot.com\",\"databaseURL\":\"http://127.0.0.1:9000/?ns=bigproject-4a536\",\"projectId\":\"bigproject-4a536\"}"}}
+[debug] [2025-11-20T13:07:39.475Z] [runtime-status] [7520] Functions runtime initialized. {"cwd":"C:\\BigProject\\functions","node_version":"22.16.0"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] Functions runtime initialized. {\"cwd\":\"C:\\\\BigProject\\\\functions\",\"node_version\":\"22.16.0\"}"}}
+[debug] [2025-11-20T13:07:39.475Z] [runtime-status] [7520] Listening to port: \\?\pipe\fire_emu_0e0dd956f33feb62 {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[runtime-status] [7520] Listening to port: \\\\?\\pipe\\fire_emu_0e0dd956f33feb62"}}
+[debug] [2025-11-20T13:07:39.497Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:07:39.497Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:07:39.498Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[debug] [2025-11-20T13:07:39.515Z] >>> [apiv2][query] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast [none]
+[debug] [2025-11-20T13:07:39.515Z] >>> [apiv2][body] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast {"eventId":"0eb812a0-0234-4d95-8782-5ad572487878","eventType":"providers/firebase.auth/eventTypes/user.create","resource":{"name":"projects/bigproject-4a536","service":"firebaseauth.googleapis.com"},"params":{},"timestamp":"2025-11-20T13:07:39.515Z","data":{"uid":"wAkvJNJYSXzPYCj4jr2rIEr72uwf","email":"toze@gmail.com","emailVerified":false,"displayName":"Tz","metadata":{"creationTime":"2025-11-20T13:07:39.514Z","lastSignInTime":"2025-11-20T13:07:39.514Z"},"customClaims":{},"providerData":[{"rawId":"toze@gmail.com","providerId":"password","displayName":"Tz","email":"toze@gmail.com","federatedId":"toze@gmail.com"}]}}
+[debug] [2025-11-20T13:07:39.518Z] <<< [apiv2][status] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast 200
+[debug] [2025-11-20T13:07:39.518Z] <<< [apiv2][body] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast {"status":"multicast_acknowledged"}
+[debug] [2025-11-20T13:07:39.751Z] Nov 20, 2025 1:07:39 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 20, 2025 1:07:39 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\r\nINFO: Detected HTTP/2 connection.\r\n"}}
+[debug] [2025-11-20T13:07:40.335Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 837.1599ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 837.1599ms"}}
+[debug] [2025-11-20T13:07:40.335Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:07:40.336Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:07:40.336Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:07:40.336Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:09:08.244Z] Nov 20, 2025 1:09:08 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 20, 2025 1:09:08 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\r\nINFO: Websocket client disconnected\r\n"}}
+[debug] [2025-11-20T13:09:11.688Z] Nov 20, 2025 1:09:11 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 20, 2025 1:09:11 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\r\nINFO: Connected to new websocket client\r\n"}}
+[debug] [2025-11-20T13:11:23.185Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:11:23.185Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:11:23.186Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:11:23.185Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:11:23.186Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:11:23.186Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:11:23.186Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:11:23.186Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:11:23.186Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T13:11:23.193Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 6.7068ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 6.7068ms"}}
+[debug] [2025-11-20T13:11:23.193Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:11:23.193Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:11:23.193Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:11:23.194Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:12:27.512Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:12:27.512Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:12:27.512Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:12:27.512Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:12:27.512Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:12:27.512Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:12:27.512Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:12:27.513Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:12:27.513Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T13:12:27.518Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 5.1181ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 5.1181ms"}}
+[debug] [2025-11-20T13:12:27.518Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:12:27.518Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:12:27.518Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:12:27.518Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:12:41.674Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:12:41.674Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:12:41.674Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:12:41.674Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:12:41.674Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:12:41.674Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:12:41.674Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:12:41.674Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:12:41.674Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T13:12:41.679Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 4.6635ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 4.6635ms"}}
+[debug] [2025-11-20T13:12:41.679Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:12:41.679Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:12:41.679Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:12:41.679Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:12:42.841Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:12:42.841Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:12:42.841Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:12:42.841Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:12:42.841Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:12:42.841Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:12:42.841Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:12:42.841Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:12:42.842Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T13:12:42.846Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 4.331ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 4.331ms"}}
+[debug] [2025-11-20T13:12:42.846Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:12:42.846Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:12:42.846Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:12:42.846Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:12:43.040Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:12:43.040Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:12:43.040Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:12:43.040Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:12:43.040Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:12:43.041Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:12:43.041Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:12:43.041Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:12:43.041Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T13:12:43.045Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 3.8751ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 3.8751ms"}}
+[debug] [2025-11-20T13:12:43.045Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:12:43.045Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:12:43.045Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:12:43.045Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:12:43.230Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:12:43.230Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:12:43.230Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:12:43.230Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:12:43.231Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:12:43.231Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:12:43.231Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:12:43.231Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:12:43.231Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_EMAIL', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T13:12:43.235Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 3.6195ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 3.6195ms"}}
+[debug] [2025-11-20T13:12:43.235Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:12:43.235Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:12:43.235Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:12:43.235Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:13:41.836Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/register-2025-11-20T13:13:41.836Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:13:41.836Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/register-2025-11-20T13:13:41.836Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:13:41.836Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/register --> us-central1-api
+[debug] [2025-11-20T13:13:41.836Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:13:41.836Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/register, mapping to path=/auth/register {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/register, mapping to path=/auth/register"}}
+[debug] [2025-11-20T13:13:41.836Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:13:41.837Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[debug] [2025-11-20T13:13:41.840Z] >>> [apiv2][query] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast [none]
+[debug] [2025-11-20T13:13:41.840Z] >>> [apiv2][body] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast {"eventId":"ac793378-2ad7-43bd-b60d-fee4935e63a1","eventType":"providers/firebase.auth/eventTypes/user.create","resource":{"name":"projects/bigproject-4a536","service":"firebaseauth.googleapis.com"},"params":{},"timestamp":"2025-11-20T13:13:41.840Z","data":{"uid":"YYEyFAzOoX2vZRJ3GaJ4KerhdwHz","email":"toze2@gmail.com","emailVerified":false,"displayName":"Toze","metadata":{"creationTime":"2025-11-20T13:13:41.839Z","lastSignInTime":"2025-11-20T13:13:41.839Z"},"customClaims":{},"providerData":[{"rawId":"toze2@gmail.com","providerId":"password","displayName":"Toze","email":"toze2@gmail.com","federatedId":"toze2@gmail.com"}]}}
+[debug] [2025-11-20T13:13:41.843Z] <<< [apiv2][status] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast 200
+[debug] [2025-11-20T13:13:41.843Z] <<< [apiv2][body] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast {"status":"multicast_acknowledged"}
+[debug] [2025-11-20T13:13:41.855Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 18.0886ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 18.0886ms"}}
+[debug] [2025-11-20T13:13:41.855Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:13:41.855Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:13:41.855Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:13:41.855Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:14:19.354Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/register-2025-11-20T13:14:19.354Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:14:19.354Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/register-2025-11-20T13:14:19.354Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:14:19.354Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/register --> us-central1-api
+[debug] [2025-11-20T13:14:19.354Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:14:19.354Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/register, mapping to path=/auth/register {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/register, mapping to path=/auth/register"}}
+[debug] [2025-11-20T13:14:19.354Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:14:19.354Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[debug] [2025-11-20T13:14:19.358Z] >>> [apiv2][query] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast [none]
+[debug] [2025-11-20T13:14:19.358Z] >>> [apiv2][body] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast {"eventId":"31adb25d-ec10-44d2-b8a1-e35b11353e92","eventType":"providers/firebase.auth/eventTypes/user.create","resource":{"name":"projects/bigproject-4a536","service":"firebaseauth.googleapis.com"},"params":{},"timestamp":"2025-11-20T13:14:19.357Z","data":{"uid":"y12KGhmRVnGjf94dsSDmjdgodqZM","email":"toze3@gmail.com","emailVerified":false,"displayName":"Toze3","metadata":{"creationTime":"2025-11-20T13:14:19.357Z","lastSignInTime":"2025-11-20T13:14:19.357Z"},"customClaims":{},"providerData":[{"rawId":"toze3@gmail.com","providerId":"password","displayName":"Toze3","email":"toze3@gmail.com","federatedId":"toze3@gmail.com"}]}}
+[debug] [2025-11-20T13:14:19.360Z] <<< [apiv2][status] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast 200
+[debug] [2025-11-20T13:14:19.360Z] <<< [apiv2][body] POST http://127.0.0.1:5001/functions/projects/bigproject-4a536/trigger_multicast {"status":"multicast_acknowledged"}
+[debug] [2025-11-20T13:14:19.368Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 14.0841ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 14.0841ms"}}
+[debug] [2025-11-20T13:14:19.369Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:14:19.369Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:14:19.369Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:14:19.369Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:15:05.187Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:15:05.187Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:15:05.187Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:15:05.187Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:15:05.187Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:15:05.187Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:15:05.188Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:15:05.188Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:15:05.188Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[debug] [2025-11-20T13:15:05.216Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 27.8597ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 27.8597ms"}}
+[debug] [2025-11-20T13:15:05.216Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:15:05.216Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:15:05.216Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:15:05.216Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:15:34.289Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:15:34.289Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:15:34.289Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:15:34.289Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:15:34.289Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:15:34.289Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:15:34.289Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:15:34.289Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:15:34.289Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[debug] [2025-11-20T13:15:34.314Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 25.1491ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 25.1491ms"}}
+[debug] [2025-11-20T13:15:34.315Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:15:34.315Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:15:34.315Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:15:34.315Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:25:11.089Z] Nov 20, 2025 1:25:11 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 20, 2025 1:25:11 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\r\nINFO: Websocket client disconnected\r\n"}}
+[debug] [2025-11-20T13:25:11.202Z] Nov 20, 2025 1:25:11 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 20, 2025 1:25:11 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\r\nINFO: Connected to new websocket client\r\n"}}
+[debug] [2025-11-20T13:59:51.940Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:59:51.940Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:59:51.940Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:59:51.940Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:59:51.940Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:59:51.941Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:59:51.941Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:59:51.941Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:59:51.941Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T13:59:51.947Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 5.9965ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 5.9965ms"}}
+[debug] [2025-11-20T13:59:51.947Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:59:51.947Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:59:51.948Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:59:51.948Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:59:53.386Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:59:53.386Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:59:53.387Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:59:53.386Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:59:53.387Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:59:53.387Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:59:53.387Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:59:53.387Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:59:53.387Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T13:59:53.391Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 3.5579ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 3.5579ms"}}
+[debug] [2025-11-20T13:59:53.391Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:59:53.391Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:59:53.391Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:59:53.391Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:59:54.165Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:59:54.165Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:59:54.165Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:59:54.165Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:59:54.165Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:59:54.166Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:59:54.166Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:59:54.166Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:59:54.166Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T13:59:54.170Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 3.3851ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 3.3851ms"}}
+[debug] [2025-11-20T13:59:54.170Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:59:54.170Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:59:54.170Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:59:54.170Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:59:54.615Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:59:54.615Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:59:54.615Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:59:54.615Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:59:54.615Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:59:54.615Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:59:54.615Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:59:54.615Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:59:54.616Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T13:59:54.619Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 3.6175ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 3.6175ms"}}
+[debug] [2025-11-20T13:59:54.619Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:59:54.619Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:59:54.619Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:59:54.619Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:59:59.925Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:59:59.925Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T13:59:59.926Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T13:59:59.925Z"],"workRunningCount":1}
+[debug] [2025-11-20T13:59:59.926Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T13:59:59.926Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T13:59:59.926Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T13:59:59.926Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T13:59:59.926Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T13:59:59.931Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 4.2846ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 4.2846ms"}}
+[debug] [2025-11-20T13:59:59.931Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T13:59:59.931Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T13:59:59.931Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T13:59:59.931Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T14:00:01.212Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T14:00:01.212Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T14:00:01.212Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T14:00:01.212Z"],"workRunningCount":1}
+[debug] [2025-11-20T14:00:01.212Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T14:00:01.212Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T14:00:01.212Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T14:00:01.212Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T14:00:01.212Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[info] >  Login error: { {"user":"Login error: {","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m Login error: {"}}
+[info] >    error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] } {"user":"  error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m   error: { code: 400, message: 'INVALID_PASSWORD', errors: [ [Object] ] }"}}
+[info] >  } {"user":"}","metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"\u001b[90m> \u001b[39m }"}}
+[debug] [2025-11-20T14:00:01.216Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 3.6929ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 3.6929ms"}}
+[debug] [2025-11-20T14:00:01.216Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T14:00:01.216Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T14:00:01.216Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T14:00:01.216Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T14:00:10.516Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T14:00:10.516Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T14:00:10.516Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T14:00:10.516Z"],"workRunningCount":1}
+[debug] [2025-11-20T14:00:10.517Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T14:00:10.517Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T14:00:10.517Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T14:00:10.517Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T14:00:10.517Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[debug] [2025-11-20T14:00:10.542Z] Nov 20, 2025 2:00:10 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Nov 20, 2025 2:00:10 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\r\nINFO: Detected HTTP/2 connection.\r\n"}}
+[debug] [2025-11-20T14:00:10.552Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 34.6063ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 34.6063ms"}}
+[debug] [2025-11-20T14:00:10.552Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T14:00:10.552Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T14:00:10.552Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T14:00:10.552Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T14:02:02.670Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T14:02:02.670Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T14:02:02.670Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T14:02:02.670Z"],"workRunningCount":1}
+[debug] [2025-11-20T14:02:02.670Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T14:02:02.670Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T14:02:02.670Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T14:02:02.670Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T14:02:02.671Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[debug] [2025-11-20T14:02:02.683Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 12.7044ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 12.7044ms"}}
+[debug] [2025-11-20T14:02:02.683Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T14:02:02.684Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T14:02:02.684Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T14:02:02.684Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T14:05:49.558Z] [work-queue] {"queuedWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T14:05:49.558Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-11-20T14:05:49.558Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/bigproject-4a536/us-central1/api/auth/login-2025-11-20T14:05:49.558Z"],"workRunningCount":1}
+[debug] [2025-11-20T14:05:49.558Z] Accepted request POST /bigproject-4a536/us-central1/api/auth/login --> us-central1-api
+[debug] [2025-11-20T14:05:49.558Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-11-20T14:05:49.559Z] [functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/bigproject-4a536/us-central1/api/auth/login, mapping to path=/auth/login"}}
+[debug] [2025-11-20T14:05:49.559Z] [worker-pool] submitRequest(triggerId=us-central1-api) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-api)"}}
+[info] i  functions: Beginning execution of "us-central1-api" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Beginning execution of \"us-central1-api\""}}
+[debug] [2025-11-20T14:05:49.559Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: BUSY"}}
+[debug] [2025-11-20T14:05:49.578Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-api" in 18.8807ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finished \"us-central1-api\" in 18.8807ms"}}
+[debug] [2025-11-20T14:05:49.578Z] [worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"[worker-us-central1-api-247ff613-2264-4688-a042-14397e27c654]: IDLE"}}
+[debug] [2025-11-20T14:05:49.578Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-11-20T14:05:49.578Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-api"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-11-20T14:05:49.578Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}

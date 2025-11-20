@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.*
 import io.ktor.client.call.body
 import io.ktor.client.request.*
@@ -17,10 +18,12 @@ import kotlinx.serialization.Serializable
 import com.example.bigproject.models.VitalReading
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import javax.inject.Inject
 
-
-class AuthViewModel(
-    private val client: HttpClient // Ktor client
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
+    val client: HttpClient // Ktor client
 ) : ViewModel() {
 
     private val apiBaseUrl = "http://10.0.2.2:5001/bigproject-4a536/us-central1/api"
@@ -35,8 +38,11 @@ class AuthViewModel(
     private val _userData = MutableStateFlow<UserData?>(null)
     val userData: StateFlow<UserData?> = _userData
 
-    private var _idToken: String? = null
-    fun getIdToken(): String? = _idToken
+    init {
+        _userData.value = authRepository.getUser()
+    }
+
+    fun getIdToken(): String? = authRepository.getToken()
 
     data class UserData(val name: String, val role: String)
 
@@ -55,7 +61,8 @@ class AuthViewModel(
                     ))
                 }.body()
 
-                _idToken = response.idToken
+                authRepository.saveToken(response.idToken)
+                authRepository.saveUser(response.user.name, response.user.role)
                 _userData.value = UserData(response.user.name, response.user.role)
                 _registerState.value = RegisterState.Success
                 _loginState.value = LoginState.Success
@@ -75,7 +82,8 @@ class AuthViewModel(
                     setBody(mapOf("email" to email, "password" to password))
                 }.body()
 
-                _idToken = response.idToken
+                authRepository.saveToken(response.idToken)
+                authRepository.saveUser(response.user.name, response.user.role)
                 _userData.value = UserData(response.user.name, response.user.role)
                 _loginState.value = LoginState.Success
             } catch (e: Exception) {
@@ -86,13 +94,13 @@ class AuthViewModel(
 
     // === LOGOUT ===
     fun logout() {
-        _idToken = null
+        authRepository.clear()
         _userData.value = null
         _loginState.value = LoginState.Idle
         _registerState.value = RegisterState.Idle
     }
 
-    fun isUserLoggedIn(): Boolean = _idToken != null
+    fun isUserLoggedIn(): Boolean = authRepository.getToken() != null
 
 
 
