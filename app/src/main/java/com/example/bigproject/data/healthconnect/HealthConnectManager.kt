@@ -5,6 +5,9 @@ import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.PermissionController
+import androidx.health.connect.client.records.HeartRateVariabilityRmssdRecord
+import androidx.health.connect.client.records.OxygenSaturationRecord
+
 
 class HealthConnectManager(
     private val context: Context
@@ -13,6 +16,11 @@ class HealthConnectManager(
     val client: HealthConnectClient by lazy {
         HealthConnectClient.getOrCreate(context)
     }
+    val readPermissions= setOf(
+        HealthPermission.getReadPermission(HeartRateRecord::class),
+        HealthPermission.getReadPermission(OxygenSaturationRecord::class),
+        HealthPermission.getReadPermission(HeartRateVariabilityRmssdRecord::class),
+    )
 
     // ====== PERMISSÕES PARA HEART RATE ======
     // Use Permission objects when requesting permissions from the UI
