@@ -79,7 +79,6 @@ fun NavGraph(client: HttpClient) {
         composable("nurse/home") {
             NurseHomeScreen(
                 nurseName = userData?.name ?: "Enfermeiro(a)",
-                authViewModel = authViewModel,
                 onScanQrClick = { navController.navigate("scan_patient") },
                 onLogoutClick = {
                     authViewModel.logout()

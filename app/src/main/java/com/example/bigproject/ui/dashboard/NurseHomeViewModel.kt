@@ -2,104 +2,78 @@ package com.example.bigproject.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bigproject.models.Patient
-import com.example.bigproject.domain.repositories.AuthRepository
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
+import com.example.bigproject.data.repositories.NurseHomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import javax.inject.Singleton
 
-data class NurseHomeSummaryUiState(val totalPatients: Int, val alerts: Int)
-
-data class PatientCardUiState(
+data class PatientUiState(
     val id: String,
     val name: String,
     val lastVitals: String,
     val lastAlert: String
 )
 
+data class NurseHomeSummaryUiState(
+    val totalPatients: Int = 0,
+    val alerts: Int = 0
+)
+
 data class NurseHomeUiState(
-    val summary: NurseHomeSummaryUiState = NurseHomeSummaryUiState(0, 0),
-    val patients: List<PatientCardUiState> = emptyList(),
-    val isLoading: Boolean = true,
-    val error: String? = null
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val summary: NurseHomeSummaryUiState = NurseHomeSummaryUiState(),
+    val patients: List<PatientUiState> = emptyList()
 )
 
 @HiltViewModel
 class NurseHomeViewModel @Inject constructor(
-    private val nurseHomeRepository: NurseHomeRepository,
-    private val authRepository: AuthRepository
+    private val nurseHomeRepository: NurseHomeRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NurseHomeUiState())
     val uiState: StateFlow<NurseHomeUiState> = _uiState.asStateFlow()
 
     init {
-        val nurseId = Firebase.auth.currentUser?.uid
-        if (nurseId != null) {
-            fetchData(nurseId)
-        } else {
-            _uiState.value = _uiState.value.copy(isLoading = false, error = "Utilizador não autenticado.")
-        }
+        loadNurseHomeData()
     }
 
-    private fun fetchData(nurseId: String) {
+    private fun loadNurseHomeData() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true)
-                val patients = nurseHomeRepository.getPatientsForNurse(nurseId)
-
-                // TODO: Implement logic to fetch vitals and alerts to calculate summary
-                // For now, summary remains 0.
-
-                _uiState.value = _uiState.value.copy(
-                    patients = patients,
-                    isLoading = false
+                // Using hardcoded data for now to populate the UI
+                val patientUiStates = listOf(
+                    PatientUiState("1", "João Silva", "PA: 120/80, FC: 75", "Sem novos alertas"),
+                    PatientUiState("2", "Maria Santos", "PA: 130/85, FC: 80", "Medicação em atraso"),
+                    PatientUiState("3", "Carlos Pereira", "PA: 110/70, FC: 65", "Sem novos alertas"),
+                    PatientUiState("4", "Ana Ferreira", "PA: 140/90, FC: 90", "Frequência cardíaca alta"),
+                    PatientUiState("5", "Pedro Rodrigues", "PA: 125/82, FC: 78", "Sem novos alertas")
                 )
 
+                val alertCount = patientUiStates.count { it.lastAlert != "Sem novos alertas" }
+
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        patients = patientUiStates,
+                        summary = NurseHomeSummaryUiState(
+                            totalPatients = patientUiStates.size,
+                            alerts = alertCount
+                        )
+                    )
+                }
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
-            }
-        }
-    }
-}
-
-@Singleton
-class NurseHomeRepository @Inject constructor() {
-    private val db = Firebase.firestore
-
-    suspend fun getPatientsForNurse(nurseId: String): List<PatientCardUiState> {
-        // Query the 'users' collection for patients who have this nurse's ID in their 'nurseIds' list.
-        val patientsSnapshot = db.collection("users")
-            .whereArrayContains("nurseIds", nurseId)
-            .get()
-            .await()
-
-        if (patientsSnapshot.isEmpty) {
-            return emptyList()
-        }
-
-        // Map the user documents to the UI state.
-        return patientsSnapshot.documents.mapNotNull { doc ->
-            val patient = doc.toObject<Patient>()
-            if (patient != null) {
-                PatientCardUiState(
-                    id = patient.id,
-                    name = patient.name,
-                    // TODO: Fetch real vitals and alerts
-                    lastVitals = "Ainda não implementado",
-                    lastAlert = "Ainda não implementado"
-                )
-            } else {
-                null
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e.message ?: "Ocorreu um erro desconhecido"
+                    )
+                }
             }
         }
     }

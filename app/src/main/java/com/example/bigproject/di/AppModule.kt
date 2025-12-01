@@ -1,7 +1,11 @@
+
 package com.example.bigproject.di
 
 import com.example.bigproject.data.repositories.AuthRepositoryImpl
+import com.example.bigproject.data.repositories.NurseHomeRepository
+import com.example.bigproject.data.repositories.NurseHomeRepositoryImpl
 import com.example.bigproject.domain.repositories.AuthRepository
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,6 +26,14 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository = authRepositoryImpl
+
+    @Provides
+    @Singleton
+    fun provideNurseHomeRepository(impl: NurseHomeRepositoryImpl): NurseHomeRepository = impl
+
+    @Provides
+    @Singleton
+    fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
     @Provides
     @Singleton
