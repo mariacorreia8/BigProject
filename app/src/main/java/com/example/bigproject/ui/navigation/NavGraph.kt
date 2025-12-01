@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.bigproject.models.UserRole
 import com.example.bigproject.models.VitalReading
 import com.example.bigproject.ui.auth.AuthEntryScreen
 import com.example.bigproject.ui.auth.AuthViewModel
@@ -37,8 +38,8 @@ fun NavGraph(client: HttpClient) {
 
     val startDestination = when {
         !authViewModel.isUserLoggedIn() -> "auth_entry"
-        userData?.role == "Nurse" -> "nurse/home"
-        userData?.role == "Patient" -> "patient/home/${userData?.name}/true"
+        userData?.role == UserRole.Nurse -> "nurse/home"
+        userData?.role == UserRole.Patient -> "patient/home/${userData?.name}/true"
         else -> "auth_entry"
     }
 
@@ -55,8 +56,8 @@ fun NavGraph(client: HttpClient) {
             LoginScreen(authViewModel = authViewModel, onLoginSuccess = {
                 navController.navigate(
                     when (userData?.role) {
-                        "Nurse" -> "nurse/home"
-                        "Patient" -> "patient/home/${userData?.name}/true"
+                        UserRole.Nurse -> "nurse/home"
+                        UserRole.Patient -> "patient/home/${userData?.name}/true"
                         else -> "auth_entry"
                     }
                 ) { popUpTo("auth_entry") { inclusive = true } }
@@ -67,8 +68,8 @@ fun NavGraph(client: HttpClient) {
             RegisterScreen(authViewModel = authViewModel, onRegisterSuccess = {
                 navController.navigate(
                     when (userData?.role) {
-                        "Nurse" -> "nurse/home"
-                        "Patient" -> "patient/home/${userData?.name}/true"
+                        UserRole.Nurse -> "nurse/home"
+                        UserRole.Patient -> "patient/home/${userData?.name}/true"
                         else -> "auth_entry"
                     }
                 ) { popUpTo("auth_entry") { inclusive = true } }

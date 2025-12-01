@@ -78,12 +78,19 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
 
-    implementation("io.ktor:ktor-client-core:2.3.5")
     implementation("io.ktor:ktor-client-android:2.3.5")
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.5")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("androidx.security:security-crypto:1.0.0")
+
+    // Ktor client core
+    implementation("io.ktor:ktor-client-core:2.3.7")
+// Engine CIO
+    implementation("io.ktor:ktor-client-cio:2.3.7")
+// Logging plugin
+    implementation("io.ktor:ktor-client-logging:2.3.7")
+// Content negotiation + JSON
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
