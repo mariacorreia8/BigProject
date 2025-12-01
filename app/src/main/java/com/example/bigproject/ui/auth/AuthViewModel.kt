@@ -1,52 +1,50 @@
-// ui/auth/AuthViewModel.kt
 package com.example.bigproject.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.example.bigproject.domain.entities.AppUser
+import com.example.bigproject.domain.entities.Nurse
+import com.example.bigproject.domain.entities.Patient
+import com.example.bigproject.domain.entities.UserRole
+import com.example.bigproject.domain.repositories.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.*
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.*
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.Serializable
-import com.example.bigproject.models.VitalReading
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    val client: HttpClient // Ktor client
+    private val client: HttpClient
 ) : ViewModel() {
 
     private val apiBaseUrl = "http://10.0.2.2:5001/bigproject-4a536/us-central1/api"
 
-    // === ESTADOS ===
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState
 
     private val _registerState = MutableStateFlow<RegisterState>(RegisterState.Idle)
     val registerState: StateFlow<RegisterState> = _registerState
 
-    private val _userData = MutableStateFlow<UserData?>(null)
-    val userData: StateFlow<UserData?> = _userData
+    private val _userData = MutableStateFlow<AppUser?>(null)
+    val userData: StateFlow<AppUser?> = _userData
 
     init {
-        _userData.value = authRepository.getUser()
+        viewModelScope.launch {
+            _userData.value = authRepository.getCurrentUser()
+        }
     }
 
     fun getIdToken(): String? = authRepository.getToken()
 
-    data class UserData(val name: String, val role: String)
-
-    // === REGISTO VIA API ===
     fun register(email: String, password: String, name: String, role: String) {
         viewModelScope.launch {
             _registerState.value = RegisterState.Loading
@@ -62,8 +60,9 @@ class AuthViewModel @Inject constructor(
                 }.body()
 
                 authRepository.saveToken(response.idToken)
-                authRepository.saveUser(response.user.name, response.user.role)
-                _userData.value = UserData(response.user.name, response.user.role)
+                val user = response.user.toAppUser()
+                authRepository.saveUser(user)
+                _userData.value = user
                 _registerState.value = RegisterState.Success
                 _loginState.value = LoginState.Success
             } catch (e: Exception) {
@@ -72,7 +71,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    // === LOGIN VIA API ===
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
@@ -83,8 +81,9 @@ class AuthViewModel @Inject constructor(
                 }.body()
 
                 authRepository.saveToken(response.idToken)
-                authRepository.saveUser(response.user.name, response.user.role)
-                _userData.value = UserData(response.user.name, response.user.role)
+                val user = response.user.toAppUser()
+                authRepository.saveUser(user)
+                _userData.value = user
                 _loginState.value = LoginState.Success
             } catch (e: Exception) {
                 _loginState.value = LoginState.Error(e.message ?: "Falha no login")
@@ -92,7 +91,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    // === LOGOUT ===
     fun logout() {
         authRepository.clear()
         _userData.value = null
@@ -101,59 +99,8 @@ class AuthViewModel @Inject constructor(
     }
 
     fun isUserLoggedIn(): Boolean = authRepository.getToken() != null
-
-
-
-    // === BUSCAR PACIENTE POR EMAIL (via Firestore local) ===
-    suspend fun getPatientByEmail(email: String): PatientData? {
-        return try {
-            val firestore = FirebaseFirestore.getInstance()
-            val snapshot = firestore.collection("users")
-                .whereEqualTo("email", email)
-                .whereEqualTo("role", "Patient")
-                .get()
-                .await()
-
-            if (snapshot.documents.isNotEmpty()) {
-                val doc = snapshot.documents[0]
-                PatientData(
-                    name = doc.getString("name") ?: "Paciente",
-                    email = doc.getString("email") ?: email,
-                    uid = doc.id
-                )
-            } else null
-        } catch (e: Exception) { null }
-    }
-
-    // === BUSCAR ÚLTIMA LEITURA VITAL ===
-    suspend fun getLatestVitalReading(patientId: String): VitalReading? {
-        return try {
-            val firestore = FirebaseFirestore.getInstance()
-            val snapshot = firestore.collection("vital_readings")
-                .whereEqualTo("patientId", patientId)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .limit(1)
-                .get()
-                .await()
-
-            if (snapshot.documents.isNotEmpty()) {
-                val doc = snapshot.documents[0]
-                VitalReading(
-                    id = doc.id,
-                    patientId = doc.getString("patientId") ?: patientId,
-                    timestamp = doc.getLong("timestamp") ?: System.currentTimeMillis(),
-                    heartRate = doc.getLong("heartRate")?.toInt() ?: 0,
-                    spo2 = doc.getLong("spo2")?.toInt() ?: 0,
-                    stressLevel = doc.getLong("stressLevel")?.toInt() ?: 0,
-                    bodyBattery = doc.getLong("bodyBattery")?.toInt() ?: 0,
-                    deviceSource = doc.getString("deviceSource") ?: "Desconhecido"
-                )
-            } else null
-        } catch (e: Exception) { null }
-    }
 }
 
-// === MODELOS DA API ===
 @Serializable
 data class ApiAuthResponse(
     val idToken: String,
@@ -166,15 +113,15 @@ data class ApiUserData(
     val name: String,
     val email: String,
     val role: String
-)
+) {
+    fun toAppUser(): AppUser {
+        return when (UserRole.valueOf(role)) {
+            UserRole.Patient -> Patient(uid = id, name = name, email = email)
+            UserRole.Nurse -> Nurse(uid = id, name = name, email = email)
+        }
+    }
+}
 
-data class PatientData(
-    val name: String,
-    val email: String,
-    val uid: String
-)
-
-// === ESTADOS ===
 sealed class LoginState {
     object Idle : LoginState()
     object Loading : LoginState()

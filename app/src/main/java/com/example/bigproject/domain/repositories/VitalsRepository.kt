@@ -1,6 +1,6 @@
 package com.example.bigproject.domain.repositories
 
-import com.example.bigproject.models.VitalReading
+import com.example.bigproject.domain.entities.VitalReading
 import kotlinx.coroutines.flow.Flow
 
 interface VitalsRepository {

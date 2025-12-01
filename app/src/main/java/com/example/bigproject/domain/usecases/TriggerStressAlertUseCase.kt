@@ -1,7 +1,7 @@
 package com.example.bigproject.domain.usecases
 
+import com.example.bigproject.domain.entities.StressAlert
 import com.example.bigproject.domain.repositories.AlertRepository
-import com.example.bigproject.models.StressAlert
 
 class TriggerStressAlertUseCase(
     private val alertRepository: AlertRepository

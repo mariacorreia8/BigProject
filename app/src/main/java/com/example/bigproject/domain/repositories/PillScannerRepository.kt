@@ -1,6 +1,6 @@
 package com.example.bigproject.domain.repositories
 
-import com.example.bigproject.models.PillScanResult
+import com.example.bigproject.domain.entities.PillScanResult
 
 
 interface PillScannerRepository {

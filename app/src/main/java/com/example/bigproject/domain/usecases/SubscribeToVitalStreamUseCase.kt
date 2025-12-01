@@ -1,7 +1,7 @@
 package com.example.bigproject.domain.usecases
 
 import com.example.bigproject.domain.repositories.VitalsRepository
-import com.example.bigproject.models.VitalReading
+import com.example.bigproject.domain.entities.VitalReading
 import kotlinx.coroutines.flow.Flow
 
 class SubscribeToVitalsStreamUseCase(

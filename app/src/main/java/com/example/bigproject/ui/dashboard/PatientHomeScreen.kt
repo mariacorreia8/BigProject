@@ -1,192 +1,232 @@
-// ui/dashboard/PatientHomeScreen.kt
 package com.example.bigproject.ui.dashboard
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bigproject.models.VitalReading
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.bigproject.domain.entities.VitalReading
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PatientDashboardScreen(
-    patientName: String,
-    latestReading: VitalReading?,
-    noDataMessage: String? = null,
-    onLogoutClick: () -> Unit
+fun PatientHomeScreen(
+    viewModel: PatientHomeViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Painel do Paciente") },
-                actions = {
-                    IconButton(onClick = onLogoutClick) {
-                        Icon(Icons.Default.Logout, contentDescription = "Logout")
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            BottomAppBar {
-                NavigationBar {
-                    NavigationBarItem(
-                        icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                        label = { Text("Home") },
-                        selected = true,
-                        onClick = { /* No action */ }
-                    )
-                    NavigationBarItem(
-                        icon = { Icon(Icons.Default.Settings, contentDescription = "Definições") },
-                        label = { Text("Definições") },
-                        selected = false,
-                        onClick = { /* TODO: Navigate to settings */ }
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
-            ) {
+
+            // Greeting
+            Text(
+                text = "Olá, ${uiState.patientName}",
+                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold)
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "Aqui está o resumo da sua saúde hoje",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            // Vitals
+            VitalsSummaryCard(vitals = uiState.vitals, isLoading = uiState.isLoading)
+
+            Spacer(Modifier.height(16.dp))
+
+            // Stress Chip
+            StressChip(level = uiState.stressLevel)
+
+            Spacer(Modifier.height(24.dp))
+
+            // Action buttons
+            PatientActionsSection(
+                onScanPillsClick = { /* TODO */ },
+                onDigitalTwinClick = { /* TODO */ },
+                onHistoryClick = { /* TODO */ }
+            )
+        }
+    }
+}
+
+@Composable
+fun VitalsSummaryCard(
+    vitals: VitalReading?,
+    isLoading: Boolean
+) {
+    Surface(
+        shape = RoundedCornerShape(24.dp),
+        tonalElevation = 6.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Última Leitura",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFFE0E0E0)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = patientName.firstOrNull()?.toString() ?: "P",
-                            color = Color(0xFF757575),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = patientName,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                    VitalItem(
+                        label = "HR",
+                        value = vitals?.heartRate?.toString() ?: "--",
+                        unit = "bpm",
+                        modifier = Modifier.weight(1f)
+                    )
+                    VitalItem(
+                        label = "SpO₂",
+                        value = vitals?.spo2?.toString() ?: "--",
+                        unit = "%",
+                        modifier = Modifier.weight(1f)
+                    )
+                    VitalItem(
+                        label = "Stress",
+                        value = vitals?.stressLevel?.toString() ?: "--",
+                        unit = "",
+                        modifier = Modifier.weight(1f)
                     )
                 }
-            }
-
-            if (noDataMessage != null) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0))
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "!",
-                            color = Color(0xFFB71C1C),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = noDataMessage,
-                            color = Color(0xFFB71C1C),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
-            } else {
-                VitalCard("SpO₂", "SpO₂", "${latestReading?.spo2 ?: "--"}%", Color(0xFF4DB6AC))
-                VitalCard("Heart Rate", "Heart Rate", "${latestReading?.heartRate ?: "--"}bpm", Color(0xFFE57373))
-                VitalCard(
-                    icon = "Temperature",
-                    label = "Temperature",
-                    value = if (latestReading?.bodyBattery != null) {
-                        String.format("%.1f", latestReading.bodyBattery * 0.9 + 96.8) + "°F"
-                    } else "98.4°F",
-                    color = Color(0xFFBA68C8)
-                )
             }
         }
     }
 }
 
 @Composable
-fun VitalCard(icon: String, label: String, value: String, color: Color) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+fun VitalItem(
+    label: String,
+    value: String,
+    unit: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(color.copy(alpha = 0.2f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(icon, fontSize = 20.sp, color = color)
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(label, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
-                Text(value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            }
+        Text(
+            text = value,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF22C55E)
+        )
+        if (unit.isNotBlank()) {
+            Text(
+                text = unit,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+
+@Composable
+fun StressChip(level: StressLevel) {
+    Surface(
+        color = level.color,
+        shape = RoundedCornerShape(50),
+        shadowElevation = 4.dp
+    ) {
+        Text(
+            text = "Stress: ${level.label}",
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            color = Color.White,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp
+        )
+    }
+}
+
+@Composable
+fun PatientActionsSection(
+    onScanPillsClick: () -> Unit,
+    onDigitalTwinClick: () -> Unit,
+    onHistoryClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        PatientActionButton(
+            text = "Escanear",
+            modifier = Modifier.weight(1f),
+            onClick = onScanPillsClick
+        )
+        PatientActionButton(
+            text = "Gêmeo Digital",
+            modifier = Modifier.weight(1f),
+            onClick = onDigitalTwinClick
+        )
+        PatientActionButton(
+            text = "Histórico",
+            modifier = Modifier.weight(1f),
+            onClick = onHistoryClick
+        )
+    }
+}
+
+@Composable
+fun PatientActionButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.height(48.dp),
+        shape = RoundedCornerShape(50),
+        contentPadding = PaddingValues(horizontal = 8.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = Color.White
+        )
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1
+        )
     }
 }
