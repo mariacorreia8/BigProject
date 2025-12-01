@@ -4,12 +4,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bigproject.domain.entities.VitalReading
+import com.example.bigproject.domain.repositories.AuthRepository
 import com.example.bigproject.domain.usecases.GetLastVitalReadingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,18 +33,21 @@ enum class StressLevel(
 
 @HiltViewModel
 class PatientHomeViewModel @Inject constructor(
-    private val getLastVitalReadingUseCase: GetLastVitalReadingUseCase
+    private val getLastVitalReadingUseCase: GetLastVitalReadingUseCase,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PatientHomeUiState())
     val uiState: StateFlow<PatientHomeUiState> = _uiState.asStateFlow()
 
     init {
-        // Mock patient name for now
-        _uiState.update { it.copy(patientName = "Carlos") }
-
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
+            val user = authRepository.getCurrentUser()
+            if (user != null) {
+                _uiState.update { it.copy(patientName = user.name) }
+            }
+
             try {
                 getLastVitalReadingUseCase().collect { reading ->
                     _uiState.update {

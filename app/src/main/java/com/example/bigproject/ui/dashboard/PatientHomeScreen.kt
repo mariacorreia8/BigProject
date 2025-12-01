@@ -130,7 +130,7 @@ fun VitalsSummaryCard(
 }
 
 @Composable
-private fun VitalItem(
+fun VitalItem(
     label: String,
     value: String,
     unit: String,
@@ -190,7 +190,7 @@ fun PatientActionsSection(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         PatientActionButton(
-            text = "Escanear Pílulas",
+            text = "Escanear",
             modifier = Modifier.weight(1f),
             onClick = onScanPillsClick
         )
@@ -208,7 +208,7 @@ fun PatientActionsSection(
 }
 
 @Composable
-private fun PatientActionButton(
+fun PatientActionButton(
     text: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit

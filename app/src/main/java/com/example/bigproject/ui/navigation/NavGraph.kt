@@ -77,12 +77,12 @@ fun NavGraph(client: HttpClient) {
 
         composable("scan_patient") {
             ScanPatientScreen(
-                client = client, // Pass the client instance here
+                client = client,
                 authViewModel = authViewModel,
-                onPatientFound = { _, _, _ ->
+                onPatientFound = { name, email, vital ->
                     navController.navigate("patient/home")
                 },
-                onPatientNotFound = { /* Decide what to do here, e.g., show a toast */ }
+                onPatientNotFound = { /*TODO Decide what to do here, e.g., show a toast */ }
             )
         }
 

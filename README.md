@@ -33,3 +33,31 @@ firebase emulators:start
 ```
 
 Then, select a target device in Android Studio and click the "Run" button ▶️.
+
+## 📋 Prerequisites
+- **Android Studio** (latest stable version recommended)
+- **Java Development Kit (JDK)** 11 or higher
+- **Node.js** and **npm** (for Firebase CLI)
+- **Firebase CLI** (see above for installation)
+
+## 🗂️ Project Structure
+
+BigProject/
+├── app/ # Main Android app source code
+├── data/ # Data models and repository implementations
+├── domain/ # Business logic and use cases
+├── firebase/ # Firebase configuration and emulator setup
+├── README.md # Project documentation
+└── ... # Other supporting files
+
+
+## 🤝 Contribution Guidelines
+
+We welcome contributions! To get started:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Commit your changes with clear messages.
+4. Open a pull request describing your changes.
+
+Please follow our code style and add tests where appropriate. For major changes, open an issue first to discuss your proposal.
