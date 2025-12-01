@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.bigproject.models.VitalReading  // IMPORT CORRETO
+import com.example.bigproject.domain.entities.VitalReading
 
 @Composable
 fun DashboardContent(readings: List<VitalReading>, modifier: Modifier = Modifier) {

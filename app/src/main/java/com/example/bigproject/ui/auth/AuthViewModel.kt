@@ -2,25 +2,21 @@ package com.example.bigproject.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bigproject.domain.entities.AppUser
+import com.example.bigproject.domain.entities.Nurse
+import com.example.bigproject.domain.entities.Patient
+import com.example.bigproject.domain.entities.UserRole
 import com.example.bigproject.domain.repositories.AuthRepository
-import com.example.bigproject.models.AppUser
-import com.example.bigproject.models.Patient
-import com.example.bigproject.models.UserRole
-import com.example.bigproject.models.VitalReading
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.*
-import io.ktor.http.*
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
@@ -103,33 +99,6 @@ class AuthViewModel @Inject constructor(
     }
 
     fun isUserLoggedIn(): Boolean = authRepository.getToken() != null
-
-    suspend fun getPatientByEmail(email: String): Patient? {
-        return try {
-            val firestore = FirebaseFirestore.getInstance()
-            val snapshot = firestore.collection("users")
-                .whereEqualTo("email", email)
-                .whereEqualTo("role", "Patient")
-                .get()
-                .await()
-
-            snapshot.documents.firstOrNull()?.toObject(Patient::class.java)
-        } catch (e: Exception) { null }
-    }
-
-    suspend fun getLatestVitalReading(patientId: String): VitalReading? {
-        return try {
-            val firestore = FirebaseFirestore.getInstance()
-            val snapshot = firestore.collection("vital_readings")
-                .whereEqualTo("patientId", patientId)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .limit(1)
-                .get()
-                .await()
-
-            snapshot.documents.firstOrNull()?.toObject(VitalReading::class.java)
-        } catch (e: Exception) { null }
-    }
 }
 
 @Serializable
@@ -147,8 +116,8 @@ data class ApiUserData(
 ) {
     fun toAppUser(): AppUser {
         return when (UserRole.valueOf(role)) {
-            UserRole.Patient -> Patient(id, name, email)
-            UserRole.Nurse -> com.example.bigproject.models.Nurse(id, name, email)
+            UserRole.Patient -> Patient(uid = id, name = name, email = email)
+            UserRole.Nurse -> Nurse(uid = id, name = name, email = email)
         }
     }
 }

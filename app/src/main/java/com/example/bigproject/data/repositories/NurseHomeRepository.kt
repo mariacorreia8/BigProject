@@ -1,7 +1,7 @@
 
 package com.example.bigproject.data.repositories
 
-import com.example.bigproject.models.Patient
+import com.example.bigproject.domain.entities.Patient
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -20,7 +20,16 @@ class NurseHomeRepositoryImpl @Inject constructor(
                 .whereEqualTo("role", "Patient")
                 .get()
                 .await()
-            snapshot.toObjects(Patient::class.java)
+
+            snapshot.documents.mapNotNull { doc ->
+                doc.getString("uid")?.let {
+                    Patient(
+                        uid = it,
+                        name = doc.getString("name") ?: "",
+                        email = doc.getString("email") ?: ""
+                    )
+                }
+            }
         } catch (e: Exception) {
             emptyList()
         }

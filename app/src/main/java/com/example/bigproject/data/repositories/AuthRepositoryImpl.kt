@@ -3,12 +3,12 @@ package com.example.bigproject.data.repositories
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.example.bigproject.domain.entities.AppUser
+import com.example.bigproject.domain.entities.Nurse
+import com.example.bigproject.domain.entities.Patient
+import com.example.bigproject.domain.entities.UserRole
 import com.example.bigproject.domain.repositories.AuthRepository
-import com.example.bigproject.models.AppUser
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,10 +26,7 @@ class AuthRepositoryImpl @Inject constructor(@ApplicationContext context: Contex
     )
 
     override fun saveToken(token: String) {
-        with(sharedPreferences.edit()) {
-            putString("auth_token", token)
-            apply()
-        }
+        sharedPreferences.edit().putString("auth_token", token).apply()
     }
 
     override fun getToken(): String? {
@@ -37,30 +34,28 @@ class AuthRepositoryImpl @Inject constructor(@ApplicationContext context: Contex
     }
 
     override fun saveUser(user: AppUser) {
-        val userJson = Json.encodeToString(user)
-        with(sharedPreferences.edit()) {
-            putString("user_data", userJson)
-            apply()
-        }
+        sharedPreferences.edit()
+            .putString("user_uid", user.uid)
+            .putString("user_name", user.name)
+            .putString("user_email", user.email)
+            .putString("user_role", user.role.name)
+            .apply()
     }
 
     override suspend fun getCurrentUser(): AppUser? {
-        val userJson = sharedPreferences.getString("user_data", null)
-        return if (userJson != null) {
-            try {
-                Json.decodeFromString<AppUser>(userJson)
-            } catch (e: Exception) {
-                null
-            }
-        } else {
-            null
+        val uid = sharedPreferences.getString("user_uid", null) ?: return null
+        val name = sharedPreferences.getString("user_name", "") ?: ""
+        val email = sharedPreferences.getString("user_email", "") ?: ""
+        val roleName = sharedPreferences.getString("user_role", null)
+
+        return when (roleName) {
+            UserRole.Patient.name -> Patient(uid, name, email)
+            UserRole.Nurse.name -> Nurse(uid, name, email)
+            else -> null
         }
     }
 
     override fun clear() {
-        with(sharedPreferences.edit()) {
-            clear()
-            apply()
-        }
+        sharedPreferences.edit().clear().apply()
     }
 }
