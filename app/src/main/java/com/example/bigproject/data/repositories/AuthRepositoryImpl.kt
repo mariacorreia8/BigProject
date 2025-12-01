@@ -9,12 +9,25 @@ import com.example.bigproject.domain.entities.Patient
 import com.example.bigproject.domain.entities.UserRole
 import com.example.bigproject.domain.repositories.AuthRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.ktor.client.HttpClient
+import io.ktor.client.request.bearerAuth
+import io.ktor.client.request.post
+import io.ktor.client.statement.bodyAsText
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class AuthRepositoryImpl @Inject constructor(@ApplicationContext context: Context) : AuthRepository {
+@Serializable
+data class SessionTokenResponse(val token: String)
 
+@Singleton
+class AuthRepositoryImpl @Inject constructor(
+    @ApplicationContext context: Context,
+    private val httpClient: HttpClient
+) : AuthRepository {
+    private val apiBaseUrl = "http://10.0.2.2:5001/bigproject-4a536/us-central1/api"
     private val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
 
     private val sharedPreferences = EncryptedSharedPreferences.create(
@@ -31,6 +44,24 @@ class AuthRepositoryImpl @Inject constructor(@ApplicationContext context: Contex
 
     override fun getToken(): String? {
         return sharedPreferences.getString("auth_token", null)
+    }
+
+    override suspend fun createSessionToken(): Result<String> {
+        return try {
+            val authToken = getToken() ?: return Result.failure(Exception("User not authenticated"))
+            val response = httpClient.post("https://$apiBaseUrl/patient-session/token") {
+                bearerAuth(authToken)
+            }
+            if (response.status.value in 200..299) {
+                val responseBody = response.bodyAsText()
+                val sessionToken = Json.decodeFromString<SessionTokenResponse>(responseBody).token
+                Result.success(sessionToken)
+            } else {
+                Result.failure(Exception("Failed to create session token: ${response.status}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     override fun saveUser(user: AppUser) {

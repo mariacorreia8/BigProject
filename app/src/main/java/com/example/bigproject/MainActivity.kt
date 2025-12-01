@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             BigProjectTheme {
-                NavGraph(client = client)
+                NavGraph()
             }
         }
     }

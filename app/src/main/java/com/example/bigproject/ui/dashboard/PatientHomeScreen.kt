@@ -3,14 +3,19 @@ package com.example.bigproject.ui.dashboard
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,17 +26,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.bigproject.domain.entities.VitalReading
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PatientHomeScreen(
-    viewModel: PatientHomeViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: PatientHomeViewModel = hiltViewModel(),
+    onLogoutClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Dashboard") },
+                actions = {
+                    IconButton(onClick = onLogoutClick) {
+                        Icon(
+                            imageVector = Icons.Default.Logout,
+                            contentDescription = "Logout"
+                        )
+                    }
+                }
+            )
+        },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
@@ -70,7 +91,8 @@ fun PatientHomeScreen(
             PatientActionsSection(
                 onScanPillsClick = { /* TODO */ },
                 onDigitalTwinClick = { /* TODO */ },
-                onHistoryClick = { /* TODO */ }
+                onHistoryClick = { /* TODO */ },
+                onShowQrClick = { navController.navigate("patient/show_qr_code") }
             )
         }
     }
@@ -183,26 +205,34 @@ fun StressChip(level: StressLevel) {
 fun PatientActionsSection(
     onScanPillsClick: () -> Unit,
     onDigitalTwinClick: () -> Unit,
-    onHistoryClick: () -> Unit
+    onHistoryClick: () -> Unit,
+    onShowQrClick: () -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            PatientActionButton(
+                text = "Escanear",
+                modifier = Modifier.weight(1f),
+                onClick = onScanPillsClick
+            )
+            PatientActionButton(
+                text = "Gêmeo Digital",
+                modifier = Modifier.weight(1f),
+                onClick = onDigitalTwinClick
+            )
+            PatientActionButton(
+                text = "Histórico",
+                modifier = Modifier.weight(1f),
+                onClick = onHistoryClick
+            )
+        }
         PatientActionButton(
-            text = "Escanear",
-            modifier = Modifier.weight(1f),
-            onClick = onScanPillsClick
-        )
-        PatientActionButton(
-            text = "Gêmeo Digital",
-            modifier = Modifier.weight(1f),
-            onClick = onDigitalTwinClick
-        )
-        PatientActionButton(
-            text = "Histórico",
-            modifier = Modifier.weight(1f),
-            onClick = onHistoryClick
+            text = "Compartilhar com Enfermeiro",
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onShowQrClick
         )
     }
 }
