@@ -5,6 +5,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bigproject.core.domain.model.VitalReading
+import androidx.compose.ui.platform.LocalContext
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +40,7 @@ fun PatientHomeScreen(
     onLogoutClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
+    val context = LocalContext.current // Get the context here, in the composable's body
     Scaffold(
         topBar = {
             TopAppBar(
@@ -92,7 +94,11 @@ fun PatientHomeScreen(
                 onScanPillsClick = { /* TODO */ },
                 onDigitalTwinClick = { /* TODO */ },
                 onHistoryClick = { /* TODO */ },
-                onShowQrClick = { navController.navigate("patient/show_qr_code") }
+                onShowQrClick = { navController.navigate("patient/show_qr_code") },
+                onSyncHealthConnectClick = {
+
+                    viewModel.onSyncHealthConnectNow(context)
+                }
             )
         }
     }
@@ -206,7 +212,8 @@ fun PatientActionsSection(
     onScanPillsClick: () -> Unit,
     onDigitalTwinClick: () -> Unit,
     onHistoryClick: () -> Unit,
-    onShowQrClick: () -> Unit
+    onShowQrClick: () -> Unit,
+    onSyncHealthConnectClick: () -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(
@@ -234,6 +241,30 @@ fun PatientActionsSection(
             modifier = Modifier.fillMaxWidth(),
             onClick = onShowQrClick
         )
+
+        // Botão de Sincronização Health Connect
+        Button(
+            onClick = onSyncHealthConnectClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            shape = RoundedCornerShape(50),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = Color.White
+            )
+        ) {
+            Icon(
+                imageVector = Icons.Default.Sync,
+                contentDescription = "Sincronizar",
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = "Sincronizar Health Connect",
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
     }
 }
 

@@ -6,6 +6,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.gms.google-services")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
+
 }
 
 android {
@@ -64,6 +65,9 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.connect.client)
     implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.hilt.work)
     //implementation(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -85,16 +89,22 @@ dependencies {
     implementation("androidx.security:security-crypto:1.0.0")
     //health connect api
     implementation("androidx.health.connect:connect-client:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
     implementation("io.ktor:ktor-client-cio:2.3.7")
     implementation("io.ktor:ktor-client-logging:2.3.7")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+    // Hilt base
+    implementation ("com.google.dagger:hilt-android:2.52")
+    kapt ("com.google.dagger:hilt-android-compiler:2.52")
 
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
+    // Hilt + WorkManager (para o Worker funcionar com Hilt)
+    implementation ("androidx.hilt:hilt-work:1.2.0")
+    kapt ("androidx.hilt:hilt-compiler:1.2.0")
 
+    // WorkManager
+    implementation ("androidx.work:work-runtime-ktx:2.9.0")
 
     implementation(libs.zxing.core)
     implementation(libs.mlkit.barcode.scanning)
@@ -106,4 +116,5 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
     implementation("androidx.camera:camera-view:${cameraxVersion}")
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation(kotlin("test"))
 }

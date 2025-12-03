@@ -11,6 +11,8 @@ import androidx.health.connect.client.records.OxygenSaturationRecord
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import com.example.bigproject.models.VitalReading
+import com.example.bigproject.data.healthconnect.HealthConnectMappers
+
 import java.time.Instant
 
 
@@ -112,66 +114,46 @@ class HealthConnectManager(
         hrvRecords: List<HeartRateVariabilityRmssdRecord>
     ): List<VitalReading> {
         val readingsMap = mutableMapOf<Long, VitalReading>()
+        val source = "HealthConnect" // default source label; replace if needed per record
 
-        // Process Heart Rate records
-        for (hrRecord in heartRateRecords) {
-            val source = hrRecord.metadata.device?.model ?: "Unknown"
-            for (sample in hrRecord.samples) {
-                val timestampSeconds = sample.time.epochSecond
-                val existingReading = readingsMap[timestampSeconds]
-                if (existingReading != null) {
-                    val newSource = if (existingReading.deviceSource == "Unknown") source else existingReading.deviceSource
-                    readingsMap[timestampSeconds] = existingReading.copy(
-                        heartRate = sample.beatsPerMinute.toInt(),
-                        deviceSource = newSource
-                    )
+        // Map heart rate samples
+        heartRateRecords.forEach { hrRecord ->
+            val hrReadings = HealthConnectMappers.heartRateSamplesToReadings(hrRecord, source)
+            hrReadings.forEach { reading ->
+                val tsSec = reading.timestamp / 1000
+                val existing = readingsMap[tsSec]
+                if (existing != null) {
+                    val newSource = if (existing.deviceSource == "Unknown") reading.deviceSource else existing.deviceSource
+                    readingsMap[tsSec] = existing.copy(heartRate = reading.heartRate, deviceSource = newSource)
                 } else {
-                    readingsMap[timestampSeconds] = VitalReading(
-                        timestamp = sample.time.toEpochMilli(),
-                        heartRate = sample.beatsPerMinute.toInt(),
-                        heartRateVariability = null,
-                        spo2 = null,
-                        deviceSource = source
-                    )
+                    readingsMap[tsSec] = reading
                 }
             }
         }
 
-        // Process SpO2 records
-        for (spo2Record in spo2Records) {
-            val timestampSeconds = spo2Record.time.epochSecond
-            val source = spo2Record.metadata.device?.model ?: "Unknown"
-            val existingReading = readingsMap[timestampSeconds]
-            if (existingReading != null) {
-                val newSource = if(existingReading.deviceSource == "Unknown") source else existingReading.deviceSource
-                readingsMap[timestampSeconds] = existingReading.copy(spo2 = spo2Record.percentage.value, deviceSource = newSource)
+        // Map SpO2
+        spo2Records.forEach { spo2Record ->
+            val reading = HealthConnectMappers.spo2RecordToReading(spo2Record, source)
+            val tsSec = reading.timestamp / 1000
+            val existing = readingsMap[tsSec]
+            if (existing != null) {
+                val newSource = if (existing.deviceSource == "Unknown") reading.deviceSource else existing.deviceSource
+                readingsMap[tsSec] = existing.copy(spo2 = reading.spo2, deviceSource = newSource)
             } else {
-                readingsMap[timestampSeconds] = VitalReading(
-                    timestamp = spo2Record.time.toEpochMilli(),
-                    heartRate = null,
-                    heartRateVariability = null,
-                    spo2 = spo2Record.percentage.value,
-                    deviceSource = source
-                )
+                readingsMap[tsSec] = reading
             }
         }
 
-        // Process HRV records
-        for (hrvRecord in hrvRecords) {
-            val timestampSeconds = hrvRecord.time.epochSecond
-            val source = hrvRecord.metadata.device?.model ?: "Unknown"
-            val existingReading = readingsMap[timestampSeconds]
-            if (existingReading != null) {
-                val newSource = if(existingReading.deviceSource == "Unknown") source else existingReading.deviceSource
-                readingsMap[timestampSeconds] = existingReading.copy(heartRateVariability = hrvRecord.heartRateVariabilityMillis, deviceSource = newSource)
+        // Map HRV
+        hrvRecords.forEach { hrvRecord ->
+            val reading = HealthConnectMappers.hrvRecordToReading(hrvRecord, source)
+            val tsSec = reading.timestamp / 1000
+            val existing = readingsMap[tsSec]
+            if (existing != null) {
+                val newSource = if (existing.deviceSource == "Unknown") reading.deviceSource else existing.deviceSource
+                readingsMap[tsSec] = existing.copy(heartRateVariability = reading.heartRateVariability, deviceSource = newSource)
             } else {
-                readingsMap[timestampSeconds] = VitalReading(
-                    timestamp = hrvRecord.time.toEpochMilli(),
-                    heartRate = null,
-                    heartRateVariability = hrvRecord.heartRateVariabilityMillis,
-                    spo2 = null,
-                    deviceSource = source
-                )
+                readingsMap[tsSec] = reading
             }
         }
 

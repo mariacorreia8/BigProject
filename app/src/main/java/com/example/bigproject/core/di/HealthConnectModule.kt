@@ -2,6 +2,7 @@ package com.example.bigproject.di
 
 import android.content.Context
 import com.example.bigproject.data.healthconnect.HealthConnectManager
+
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,4 +19,5 @@ object HealthConnectModule {
     fun provideHealthConnectManager(@ApplicationContext context: Context): HealthConnectManager {
         return HealthConnectManager(context)
     }
+
 }

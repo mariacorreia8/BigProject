@@ -2,7 +2,8 @@ package com.example.bigproject.ui.vitals
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bigproject.data.repositories.VitalsRepository
+import com.example.bigproject.data.VitalsRepository
+import com.example.bigproject.data.healthconnect.HealthConnectAvailability
 import com.example.bigproject.models.VitalReading
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,10 +21,19 @@ class VitalsViewModel @Inject constructor(
     private val _vitals = MutableStateFlow<List<VitalReading>>(emptyList())
     val vitals: StateFlow<List<VitalReading>> = _vitals
 
+    private val _availability = MutableStateFlow<HealthConnectAvailability?>(null)
+    val availability: StateFlow<HealthConnectAvailability?> = _availability
+
     fun fetchLatestVitals() {
         viewModelScope.launch {
-            val since = Instant.now().minus(1, ChronoUnit.DAYS)
-            _vitals.value = vitalsRepository.getLatestVitals(since)
+            val availability = vitalsRepository.getHealthConnectAvailability()
+            _availability.value = availability
+            if (availability is HealthConnectAvailability.InstalledAndAvailable) {
+                val since = Instant.now().minus(1, ChronoUnit.DAYS)
+                _vitals.value = vitalsRepository.getLatestVitals(since)
+            } else {
+                _vitals.value = emptyList()
+            }
         }
     }
 }

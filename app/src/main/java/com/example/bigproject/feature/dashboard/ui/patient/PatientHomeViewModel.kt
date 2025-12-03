@@ -1,5 +1,6 @@
 package com.example.bigproject.feature.dashboard.ui.patient
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,7 +35,7 @@ enum class StressLevel(
 @HiltViewModel
 class PatientHomeViewModel @Inject constructor(
     private val getLastVitalReadingUseCase: GetLastVitalReadingUseCase,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PatientHomeUiState())
@@ -69,6 +70,25 @@ class PatientHomeViewModel @Inject constructor(
                         error = e.message ?: "Ocorreu um erro desconhecido"
                     )
                 }
+            }
+        }
+    }
+
+    // Trigger manual Health Connect sync directly (no WorkManager), using helper function.
+    fun onSyncHealthConnectNow(context: android.content.Context) {
+        viewModelScope.launch {
+            Log.d("PatientHomeViewModel", "Sync button clicked: starting syncHealthConnectNow")
+            val user = authRepository.getCurrentUser()
+            val patientId = user?.id
+            if (patientId == null) {
+                Log.w("PatientHomeViewModel", "No logged user; aborting manual sync")
+                return@launch
+            }
+            try {
+                com.example.bigproject.data.healthconnect.syncHealthConnectNow(context, patientId)
+                Log.d("PatientHomeViewModel", "syncHealthConnectNow finished successfully")
+            } catch (e: Exception) {
+                Log.e("PatientHomeViewModel", "syncHealthConnectNow failed", e)
             }
         }
     }
