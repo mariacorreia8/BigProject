@@ -1,4 +1,4 @@
-package com.example.bigproject.data
+package com.example.bigproject.data.repositories
 
 import com.example.bigproject.data.healthconnect.HealthConnectManager
 import com.example.bigproject.models.VitalReading

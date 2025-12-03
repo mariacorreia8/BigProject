@@ -1,6 +1,6 @@
 package com.example.bigproject.data.healthconnect
 
-open class HealthConnectAvailability {
+sealed class HealthConnectAvailability {
 
     //Health Connect não existe neste dispositivo(sem suporte)
     data object NotSupported : HealthConnectAvailability()

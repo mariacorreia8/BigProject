@@ -2,7 +2,7 @@ package com.example.bigproject.ui.vitals
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bigproject.data.VitalsRepository
+import com.example.bigproject.data.repositories.VitalsRepository
 import com.example.bigproject.models.VitalReading
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

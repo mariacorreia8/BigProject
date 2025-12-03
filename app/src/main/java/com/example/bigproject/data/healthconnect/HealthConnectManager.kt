@@ -13,12 +13,7 @@ import androidx.health.connect.client.time.TimeRangeFilter
 import com.example.bigproject.models.VitalReading
 import java.time.Instant
 
-enum class HealthConnectAvailability {
-    InstalledAndAvailable,
-    PermissionsNotGranted,
-    NotSupported,
-    NotInstalled
-}
+
 class HealthConnectManager(
     private val context: Context
 ) {
