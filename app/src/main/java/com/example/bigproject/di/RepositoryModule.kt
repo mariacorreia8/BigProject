@@ -1,6 +1,8 @@
 package com.example.bigproject.di
 
+import com.example.bigproject.data.repositories.AlertRepositoryImpl
 import com.example.bigproject.data.repositories.PatientRepositoryImpl
+import com.example.bigproject.domain.repositories.AlertRepository
 import com.example.bigproject.domain.repositories.PatientRepository
 import dagger.Binds
 import dagger.Module
@@ -14,5 +16,9 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindPatientRepository(impl: PatientRepositoryImpl): PatientRepository
+    abstract fun bindAlertRepository(alertRepositoryImpl: AlertRepositoryImpl): AlertRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPatientRepository(patientRepositoryImpl: PatientRepositoryImpl): PatientRepository
 }
