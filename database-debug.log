@@ -1,3 +1,2 @@
-11:12:32.350 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
-11:12:32.501 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
-12:59:14.583 [NamespaceSystem-akka.actor.default-dispatcher-8] INFO com.firebase.core.namespace.NamespaceActor - bigproject-4a536 successfully activated FBKV (SurveyIdle(0)) wait: 250ms, init: 0ms
+11:13:56.168 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+11:13:56.328 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
