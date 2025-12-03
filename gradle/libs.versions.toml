@@ -11,6 +11,7 @@ composeBom = "2024.09.00"
 roomCompiler = "2.8.3"
 hilt = "2.51.1"
 hiltNavigationCompose = "1.2.0"
+connectClient = "1.1.0"
 foundationLayout = "1.9.5"
 
 [libraries]
@@ -32,6 +33,7 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-connect-client = { group = "androidx.health.connect", name = "connect-client", version.ref = "connectClient" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 
 [plugins]
