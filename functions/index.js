@@ -6,10 +6,9 @@ const axios = require("axios");
 const { Timestamp } = require("firebase-admin/firestore");
 const { v4: uuidv4 } = require("uuid");
 
-
-
 admin.initializeApp();
 
+// Emuladores (útil quando corres localmente)
 process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.FIREBASE_AUTH_EMULATOR_HOST || "localhost:9099";
 process.env.FIRESTORE_EMULATOR_HOST = process.env.FIRESTORE_EMULATOR_HOST || "localhost:8080";
 
@@ -17,17 +16,21 @@ const db = admin.firestore();
 const app = express();
 app.use(bodyParser.json());
 
+// ===========================
+// HELPERS
+// ===========================
 
 async function getUserDocByUid(uid) {
   const doc = await db.collection("users").doc(uid).get();
   return doc.exists ? doc.data() : null;
 }
 
-
 async function verifyToken(req, res, next) {
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Missing or invalid Authorization header" });
+    return res
+      .status(401)
+      .json({ error: "Missing or invalid Authorization header" });
   }
 
   const idToken = auth.split("Bearer ")[1];
@@ -48,17 +51,19 @@ async function verifyToken(req, res, next) {
 // ===========================
 
 // POST /auth/register
-//{"email": "joaquim", "password": "joaquim123", "name": "joaquim", "role": "Nurse"}
+// body: { email, password, name, role }
 app.post("/auth/register", async (req, res) => {
   try {
-    const { email, password, name, role, linkedGarminDeviceId = null, patientIds = [] } = req.body;
+    const { email, password, name, role } = req.body;
 
     if (!email || !password || !name || !role) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     if (!["Nurse", "Patient"].includes(role)) {
-      return res.status(400).json({ error: "role must be 'Nurse' or 'Patient'" });
+      return res
+        .status(400)
+        .json({ error: "role must be 'Nurse' or 'Patient'" });
     }
 
     // Criar user no Firebase Auth
@@ -70,16 +75,21 @@ app.post("/auth/register", async (req, res) => {
 
     const uid = userRecord.uid;
 
-    // Criar documento Firestore
-    const userData = {
+    // Criar documento Firestore com modelo N:N
+    let userData = {
       id: uid,
       name,
       role,
       email,
-      linkedGarminDeviceId: linkedGarminDeviceId || null,
-      patientIds: Array.isArray(patientIds) ? patientIds : [],
       createdAt: Timestamp.now(),
     };
+
+    if (role === "Nurse") {
+      userData.patientIds = [];
+    } else if (role === "Patient") {
+      userData.nurseIds = [];
+      userData.usesHealthConnect = false; // flag útil do lado da app
+    }
 
     await db.collection("users").doc(uid).set(userData);
 
@@ -90,7 +100,7 @@ app.post("/auth/register", async (req, res) => {
     const resp = await axios.post(signInUrl, {
       email,
       password,
-      returnSecureToken: true
+      returnSecureToken: true,
     });
 
     const idToken = resp.data.idToken;
@@ -101,15 +111,20 @@ app.post("/auth/register", async (req, res) => {
     if (error.code === "auth/email-already-exists") {
       return res.status(400).json({ error: "Email already in use" });
     }
-    return res.status(500).json({ error: "Internal server error", details: error?.message });
+    return res
+      .status(500)
+      .json({ error: "Internal server error", details: error?.message });
   }
 });
 
 // POST /auth/login
+// body: { email, password }
 app.post("/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ error: "Missing email or password" });
+    if (!email || !password) {
+      return res.status(400).json({ error: "Missing email or password" });
+    }
 
     const authHost = process.env.FIREBASE_AUTH_EMULATOR_HOST || "localhost:9099";
     const signInUrl = `http://${authHost}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=fake-api-key`;
@@ -117,14 +132,16 @@ app.post("/auth/login", async (req, res) => {
     const resp = await axios.post(signInUrl, {
       email,
       password,
-      returnSecureToken: true
+      returnSecureToken: true,
     });
 
     const idToken = resp.data.idToken;
     const uid = resp.data.localId;
 
     const userDoc = await getUserDocByUid(uid);
-    if (!userDoc) return res.status(404).json({ error: "User doc not found" });
+    if (!userDoc) {
+      return res.status(404).json({ error: "User doc not found" });
+    }
 
     return res.json({ idToken, user: userDoc });
   } catch (error) {
@@ -133,7 +150,9 @@ app.post("/auth/login", async (req, res) => {
     if (errData && errData.error && errData.error.message) {
       return res.status(400).json({ error: errData.error.message });
     }
-    return res.status(500).json({ error: "Internal server error", details: error?.message });
+    return res
+      .status(500)
+      .json({ error: "Internal server error", details: error?.message });
   }
 });
 
@@ -148,20 +167,34 @@ app.get("/patients/:id", verifyToken, async (req, res) => {
     const requesterUid = req.uid;
     const requesterRole = req.role;
 
-    const patientDocSnapshot = await db.collection("users").doc(patientId).get();
-    if (!patientDocSnapshot.exists) return res.status(404).json({ error: "Patient not found" });
+    const patientDocSnapshot = await db
+      .collection("users")
+      .doc(patientId)
+      .get();
+    if (!patientDocSnapshot.exists) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
     const patient = patientDocSnapshot.data();
 
-    if (requesterUid === patientId) return res.json({ patient });
+    // próprio paciente
+    if (requesterUid === patientId) {
+      return res.json({ patient });
+    }
 
+    // nurse que tenha este paciente associado
     if (requesterRole === "Nurse") {
-      const nurseDocSnapshot = await db.collection("users").doc(requesterUid).get();
+      const nurseDocSnapshot = await db
+        .collection("users")
+        .doc(requesterUid)
+        .get();
       const nurseDoc = nurseDocSnapshot.data();
       const nursePatientIds = nurseDoc?.patientIds || [];
       if (Array.isArray(nursePatientIds) && nursePatientIds.includes(patientId)) {
         return res.json({ patient });
       } else {
-        return res.status(403).json({ error: "Not authorized to view this patient" });
+        return res
+          .status(403)
+          .json({ error: "Not authorized to view this patient" });
       }
     }
 
@@ -178,20 +211,34 @@ app.get("/nurses/:id/patients", verifyToken, async (req, res) => {
     const nurseId = req.params.id;
     const requesterUid = req.uid;
 
-    if (req.role !== "Nurse") return res.status(403).json({ error: "Only nurses can access this endpoint" });
-    if (requesterUid !== nurseId) return res.status(403).json({ error: "You can only fetch your own patients" });
+    if (req.role !== "Nurse") {
+      return res
+        .status(403)
+        .json({ error: "Only nurses can access this endpoint" });
+    }
+    if (requesterUid !== nurseId) {
+      return res
+        .status(403)
+        .json({ error: "You can only fetch your own patients" });
+    }
 
     const nurseDoc = await db.collection("users").doc(nurseId).get();
-    if (!nurseDoc.exists) return res.status(404).json({ error: "Nurse not found" });
+    if (!nurseDoc.exists) {
+      return res.status(404).json({ error: "Nurse not found" });
+    }
 
     const nurseData = nurseDoc.data();
     const patientIds = nurseData.patientIds || [];
 
-    if (!Array.isArray(patientIds) || patientIds.length === 0) return res.json({ patients: [] });
+    if (!Array.isArray(patientIds) || patientIds.length === 0) {
+      return res.json({ patients: [] });
+    }
 
-    const patientPromises = patientIds.map(pid => db.collection("users").doc(pid).get());
+    const patientPromises = patientIds.map((pid) =>
+      db.collection("users").doc(pid).get()
+    );
     const snaps = await Promise.all(patientPromises);
-    const patients = snaps.filter(s => s.exists).map(s => s.data());
+    const patients = snaps.filter((s) => s.exists).map((s) => s.data());
 
     return res.json({ patients });
   } catch (err) {
@@ -200,11 +247,12 @@ app.get("/nurses/:id/patients", verifyToken, async (req, res) => {
   }
 });
 
-
-
+// ===========================
+// VITALS
+// ===========================
 
 // POST /patients/:id/vitals
-//body{"heartRate": 45, "spo2": 78, "stressLevel": 89, "deviceSource": "device_1"}
+// body: { heartRate, spo2, stressLevel, bodyBattery?, deviceSource }
 app.post("/patients/:id/vitals", verifyToken, async (req, res) => {
   try {
     const patientId = req.params.id;
@@ -215,16 +263,26 @@ app.post("/patients/:id/vitals", verifyToken, async (req, res) => {
       return res.status(403).json({ error: "Not authorized" });
     }
 
-    /*if (requesterRole === "Nurse" && requesterUid !== patientId) {
+    // se for nurse, tem de estar associado a este paciente
+    if (requesterRole === "Nurse" && requesterUid !== patientId) {
       const nurseDoc = await db.collection("users").doc(requesterUid).get();
       const nursePatientIds = nurseDoc.data()?.patientIds || [];
       if (!nursePatientIds.includes(patientId)) {
-        return res.status(403).json({ error: "Nurse not authorized for this patient" });
+        return res
+          .status(403)
+          .json({ error: "Nurse not authorized for this patient" });
       }
-    }*/
+    }
 
-    const { heartRate, spo2, stressLevel, bodyBattery = null, deviceSource } = req.body;
-    if (!heartRate || !spo2 || !stressLevel || !deviceSource) {
+    const { heartRate, spo2, stressLevel, bodyBattery = null, deviceSource } =
+      req.body;
+
+    if (
+      heartRate == null ||
+      spo2 == null ||
+      stressLevel == null ||
+      !deviceSource
+    ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -239,9 +297,12 @@ app.post("/patients/:id/vitals", verifyToken, async (req, res) => {
     };
 
     const docRef = await db.collection("vital_readings").add(vitalData);
-    await docRef.update({ id: docRef.id }); 
+    await docRef.update({ id: docRef.id });
 
-    return res.json({ message: "Vital reading saved", vital: { id: docRef.id, ...vitalData } });
+    return res.json({
+      message: "Vital reading saved",
+      vital: { id: docRef.id, ...vitalData },
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Internal server error" });
@@ -263,7 +324,9 @@ app.get("/patients/:id/vitals", verifyToken, async (req, res) => {
       const nurseDoc = await db.collection("users").doc(requesterUid).get();
       const nursePatientIds = nurseDoc.data()?.patientIds || [];
       if (!nursePatientIds.includes(patientId)) {
-        return res.status(403).json({ error: "Nurse not authorized for this patient" });
+        return res
+          .status(403)
+          .json({ error: "Nurse not authorized for this patient" });
       }
     }
 
@@ -278,7 +341,7 @@ app.get("/patients/:id/vitals", verifyToken, async (req, res) => {
       .orderBy("timestamp", "asc")
       .get();
 
-    const vitals = querySnapshot.docs.map(doc => doc.data());
+    const vitals = querySnapshot.docs.map((doc) => doc.data());
     return res.json({ vitals });
   } catch (err) {
     console.error(err);
@@ -286,6 +349,9 @@ app.get("/patients/:id/vitals", verifyToken, async (req, res) => {
   }
 });
 
+// ===========================
+// ALERTS
+// ===========================
 
 // POST /patients/:id/alerts
 // body: { severity, message }
@@ -303,7 +369,9 @@ app.post("/patients/:id/alerts", verifyToken, async (req, res) => {
       const nurseDoc = await db.collection("users").doc(requesterUid).get();
       const nursePatientIds = nurseDoc.data()?.patientIds || [];
       if (!nursePatientIds.includes(patientId)) {
-        return res.status(403).json({ error: "Nurse not authorized for this patient" });
+        return res
+          .status(403)
+          .json({ error: "Nurse not authorized for this patient" });
       }
     }
 
@@ -317,19 +385,21 @@ app.post("/patients/:id/alerts", verifyToken, async (req, res) => {
       timestamp: Date.now(),
       severity,
       message,
-      acknowledged: false
+      acknowledged: false,
     };
 
     const docRef = await db.collection("stress_alerts").add(alertData);
     await docRef.update({ id: docRef.id });
 
-    return res.json({ message: "Alert created", alert: { id: docRef.id, ...alertData } });
+    return res.json({
+      message: "Alert created",
+      alert: { id: docRef.id, ...alertData },
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 // GET /patients/:id/alerts
 app.get("/patients/:id/alerts", verifyToken, async (req, res) => {
@@ -346,7 +416,9 @@ app.get("/patients/:id/alerts", verifyToken, async (req, res) => {
       const nurseDoc = await db.collection("users").doc(requesterUid).get();
       const nursePatientIds = nurseDoc.data()?.patientIds || [];
       if (!nursePatientIds.includes(patientId)) {
-        return res.status(403).json({ error: "Nurse not authorized for this patient" });
+        return res
+          .status(403)
+          .json({ error: "Nurse not authorized for this patient" });
       }
     }
 
@@ -356,13 +428,17 @@ app.get("/patients/:id/alerts", verifyToken, async (req, res) => {
       .orderBy("timestamp", "desc")
       .get();
 
-    const alerts = querySnapshot.docs.map(doc => doc.data());
+    const alerts = querySnapshot.docs.map((doc) => doc.data());
     return res.json({ alerts });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
+// ===========================
+// PILL IDENTIFY (DEMO)
+// ===========================
 
 // POST /pill/identify
 // body: { imprint, color, shape, image? }
@@ -371,7 +447,10 @@ app.post("/pill/identify", async (req, res) => {
     const { imprint, color, shape, image } = req.body;
 
     if (!imprint && !color && !shape && !image) {
-      return res.status(400).json({ error: "At least one identifier (imprint, color, shape, or image) is required" });
+      return res.status(400).json({
+        error:
+          "At least one identifier (imprint, color, shape, or image) is required",
+      });
     }
 
     const detectedImprint = imprint || "N/A";
@@ -380,15 +459,15 @@ app.post("/pill/identify", async (req, res) => {
 
     const candidateMedications = [
       { name: "Aspirin", dosage: "500mg" },
-      { name: "Paracetamol", dosage: "500mg" }
+      { name: "Paracetamol", dosage: "500mg" },
     ];
 
     const result = {
-      imageLocalPath: image || null,  
+      imageLocalPath: image || null,
       detectedImprint,
       detectedColor,
       detectedShape,
-      candidateMedications
+      candidateMedications,
     };
 
     return res.json(result);
@@ -398,26 +477,34 @@ app.post("/pill/identify", async (req, res) => {
   }
 });
 
-// POST /nurse/session
-app.post("/nurse/session", verifyToken, async (req, res) => {
+// ===========================
+// QR SESSION (Paciente cria, Nurse lê)
+// ===========================
+
+// POST /patient/session
+// Paciente cria sessão para ser lida por um enfermeiro (QR)
+app.post("/patient/session", verifyToken, async (req, res) => {
   try {
     const requesterUid = req.uid;
     const requesterRole = req.role;
 
-    if (requesterRole !== "Nurse") {
-      return res.status(403).json({ error: "Only nurses can create a QR session" });
+    if (requesterRole !== "Patient") {
+      return res
+        .status(403)
+        .json({ error: "Only patients can create a QR session" });
     }
 
     const qrToken = uuidv4();
-    const expiresAt = Date.now() + 60 * 60 * 1000; 
+    const expiresAt = Date.now() + 60 * 60 * 1000; // 1h
 
     await db.collection("qr_sessions").doc(qrToken).set({
-      nurseId: requesterUid,
+      patientId: requesterUid,
       createdAt: Date.now(),
       expiresAt,
       resolved: false,
     });
 
+    // qrToken é o valor que vais meter no QR code
     return res.json({ qrToken, expiresAt });
   } catch (err) {
     console.error(err);
@@ -425,23 +512,28 @@ app.post("/nurse/session", verifyToken, async (req, res) => {
   }
 });
 
-// POST /nurse/session/resolve
-// body: { qrToken, patientId }
-app.post("/nurse/session/resolve", verifyToken, async (req, res) => {
+// POST /patient/session/resolve
+// body: { qrToken }
+// Nurse lê o QR do paciente e liga-se a esse paciente
+app.post("/patient/session/resolve", verifyToken, async (req, res) => {
   try {
-    const requesterUid = req.uid;
+    const requesterUid = req.uid; // nurse
     const requesterRole = req.role;
-    const { qrToken, patientId } = req.body;
+    const { qrToken } = req.body;
 
-    if (!qrToken || !patientId) {
-      return res.status(400).json({ error: "Missing qrToken or patientId" });
+    if (!qrToken) {
+      return res.status(400).json({ error: "Missing qrToken" });
     }
 
-    if (requesterRole !== "Patient") {
-      return res.status(403).json({ error: "Only patients can resolve a QR session" });
+    if (requesterRole !== "Nurse") {
+      return res
+        .status(403)
+        .json({ error: "Only nurses can resolve a QR session" });
     }
 
-    const sessionDoc = await db.collection("qr_sessions").doc(qrToken).get();
+    const sessionRef = db.collection("qr_sessions").doc(qrToken);
+    const sessionDoc = await sessionRef.get();
+
     if (!sessionDoc.exists) {
       return res.status(404).json({ error: "QR session not found" });
     }
@@ -456,12 +548,35 @@ app.post("/nurse/session/resolve", verifyToken, async (req, res) => {
       return res.status(400).json({ error: "QR session expired" });
     }
 
-    await db.collection("qr_sessions").doc(qrToken).update({
+    const patientId = session.patientId;
+    const nurseId = requesterUid;
+
+    // 1) marcar sessão como resolvida
+    await sessionRef.update({
       resolved: true,
-      patientId,
+      nurseId,
       resolvedAt: Date.now(),
     });
 
+    // 2) atualizar relação N:N
+    await db
+      .collection("users")
+      .doc(nurseId)
+      .update({
+        patientIds: admin.firestore.FieldValue.arrayUnion(patientId),
+      });
+
+    await db
+      .collection("users")
+      .doc(patientId)
+      .set(
+        {
+          nurseIds: admin.firestore.FieldValue.arrayUnion(nurseId),
+        },
+        { merge: true }
+      );
+
+    // 3) devolver dados do paciente
     const patientDoc = await db.collection("users").doc(patientId).get();
     if (!patientDoc.exists) {
       return res.status(404).json({ error: "Patient not found" });
@@ -474,21 +589,29 @@ app.post("/nurse/session/resolve", verifyToken, async (req, res) => {
   }
 });
 
+// ===========================
+// PATIENT SEARCH
+// ===========================
+
 // POST /patients/search
+// body: { email }
 app.post("/patients/search", verifyToken, async (req, res) => {
   try {
     const { email } = req.body;
     const requesterRole = req.role;
 
     if (requesterRole !== "Nurse") {
-      return res.status(403).json({ error: "Only nurses can search patients" });
+      return res
+        .status(403)
+        .json({ error: "Only nurses can search patients" });
     }
 
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
     }
 
-    const userSnapshot = await db.collection("users")
+    const userSnapshot = await db
+      .collection("users")
       .where("email", "==", email)
       .where("role", "==", "Patient")
       .limit(1)
@@ -502,7 +625,8 @@ app.post("/patients/search", verifyToken, async (req, res) => {
     const patientId = patientDoc.id;
     const patient = patientDoc.data();
 
-    const vitalSnapshot = await db.collection("vital_readings")
+    const vitalSnapshot = await db
+      .collection("vital_readings")
       .where("patientId", "==", patientId)
       .orderBy("timestamp", "desc")
       .limit(1)
@@ -519,7 +643,7 @@ app.post("/patients/search", verifyToken, async (req, res) => {
         spo2: data.spo2,
         stressLevel: data.stressLevel,
         bodyBattery: data.bodyBattery ?? null,
-        deviceSource: data.deviceSource
+        deviceSource: data.deviceSource,
       };
     }
 
@@ -531,11 +655,10 @@ app.post("/patients/search", verifyToken, async (req, res) => {
       patient: {
         id: patientId,
         name: patient.name,
-        email: patient.email
+        email: patient.email,
       },
-      latestVital
+      latestVital,
     });
-
   } catch (err) {
     console.error("Erro em /patients/search:", err);
     return res.status(500).json({ error: "Internal server error" });

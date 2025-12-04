@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.bigproject.core.domain.model.VitalReading
 import com.example.bigproject.core.domain.repository.AuthRepository
 import com.example.bigproject.core.domain.usecase.dashboard.GetLastVitalReadingUseCase
+import com.example.bigproject.data.healthconnect.HealthConnectAvailability
+import com.example.bigproject.data.healthconnect.HealthConnectManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +22,10 @@ data class PatientHomeUiState(
     val error: String? = null,
     val patientName: String = "Patient",
     val vitals: VitalReading? = null,
-    val stressLevel: StressLevel = StressLevel.Calm
+    val stressLevel: StressLevel = StressLevel.Calm,
+    val healthConnectAvailability: HealthConnectAvailability? = null,
+    val isCheckingHealthConnect: Boolean = false,
+    val healthConnectMessage: String? = null
 )
 
 enum class StressLevel(
@@ -36,12 +41,17 @@ enum class StressLevel(
 class PatientHomeViewModel @Inject constructor(
     private val getLastVitalReadingUseCase: GetLastVitalReadingUseCase,
     private val authRepository: AuthRepository,
+    private val healthConnectManager: HealthConnectManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PatientHomeUiState())
     val uiState: StateFlow<PatientHomeUiState> = _uiState.asStateFlow()
 
+    val healthPermissionContract = healthConnectManager.requestPermissionsActivityContract()
+    val healthConnectPermissions: Set<String> = healthConnectManager.permissions
+
     init {
+        refreshHealthConnectAvailability()
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val user = authRepository.getCurrentUser()
@@ -72,6 +82,47 @@ class PatientHomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun refreshHealthConnectAvailability() {
+        viewModelScope.launch {
+            loadHealthConnectAvailability()
+        }
+    }
+
+    fun onHealthPermissionsResult(grantedPermissions: Set<String>) {
+        viewModelScope.launch {
+            val hasAll = healthConnectPermissions.all { grantedPermissions.contains(it) }
+            _uiState.update {
+                it.copy(
+                    healthConnectMessage = if (hasAll) null else "As permissões do Health Connect são necessárias para sincronizar os dados."
+                )
+            }
+            loadHealthConnectAvailability()
+        }
+    }
+
+    private suspend fun loadHealthConnectAvailability() {
+        _uiState.update { it.copy(isCheckingHealthConnect = true) }
+        runCatching { healthConnectManager.getAvailability() }
+            .onSuccess { availability ->
+                _uiState.update {
+                    it.copy(
+                        healthConnectAvailability = availability,
+                        isCheckingHealthConnect = false
+                    )
+                }
+            }
+            .onFailure { throwable ->
+                Log.e("PatientHomeViewModel", "Falha ao verificar Health Connect", throwable)
+                _uiState.update {
+                    it.copy(
+                        isCheckingHealthConnect = false,
+                        healthConnectAvailability = null,
+                        healthConnectMessage = throwable.localizedMessage ?: "Não foi possível verificar o estado do Health Connect."
+                    )
+                }
+            }
     }
 
     // Trigger manual Health Connect sync directly (no WorkManager), using helper function.

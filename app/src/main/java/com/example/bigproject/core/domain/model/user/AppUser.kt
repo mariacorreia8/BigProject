@@ -22,7 +22,7 @@ data class Patient(
     override val name: String = "",
     override val email: String = "",
     override val role: UserRole = UserRole.Patient,
-    val linkedGarminDeviceId: String? = null,
+    val usesHealthConnect: Boolean = false,
     val nurseIds: List<String> = emptyList()
 ) : AppUser
 
