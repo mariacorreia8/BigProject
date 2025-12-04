@@ -1,6 +1,9 @@
 package com.example.bigproject.data.healthconnect
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.HeartRateRecord
@@ -27,15 +30,26 @@ class HealthConnectManager(
     val client: HealthConnectClient by lazy {
         HealthConnectClient.getOrCreate(context)
     }
-    val permissions: Set<String> = setOf(
+
+    private val requiredPermissionsInternal = setOf(
         HealthPermission.getReadPermission(HeartRateRecord::class),
-        HealthPermission.getReadPermission(OxygenSaturationRecord::class),
-        HealthPermission.getReadPermission(HeartRateVariabilityRmssdRecord::class),
-        // Adicionar outras permissões conforme necessário
+        HealthPermission.getReadPermission(OxygenSaturationRecord::class)
     )
+    private val optionalPermissionsInternal = setOf(
+        HealthPermission.getReadPermission(HeartRateVariabilityRmssdRecord::class)
+    )
+    val permissions: Set<String> = requiredPermissionsInternal + optionalPermissionsInternal
+    val requiredPermissions: Set<String> = requiredPermissionsInternal
 
     fun requestPermissionsActivityContract(): ActivityResultContract<Set<String>, Set<String>> {
         return PermissionController.createRequestPermissionResultContract()
+    }
+
+    fun buildPermissionsIntent(): Intent {
+        return Intent("android.health.connect.action.HEALTH_CONNECT_SETTINGS").apply {
+            data = Uri.parse("package:$PROVIDER_PACKAGE_NAME")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
     }
     // Verifica se o Health Connect está disponível e o estado das permissões.
 
@@ -69,9 +83,13 @@ class HealthConnectManager(
     suspend fun hasRequiredPermissions(): Boolean {
         val granted: Set<String> = client
             .permissionController
-            .getGrantedPermissions() // API nova: sem argumentos, devolve Set<String>
+            .getGrantedPermissions()
 
-        return granted.containsAll(permissions)
+        val missing = requiredPermissionsInternal.filterNot { granted.contains(it) }
+        if (missing.isNotEmpty()) {
+            Log.d("HealthConnectManager", "Missing Health Connect permissions: $missing")
+        }
+        return missing.isEmpty()
     }
 
     suspend fun readLatestVitals(since: Instant): List<VitalReading> {

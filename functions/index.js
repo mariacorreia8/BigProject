@@ -46,6 +46,46 @@ async function verifyToken(req, res, next) {
   }
 }
 
+function buildVitalsDocumentId(patientId, timestamp) {
+  return `${patientId}_${timestamp}`;
+}
+
+function normalizeHealthConnectPayload(payload) {
+  const {
+    timestamp,
+    patientId,
+    heartRate = null,
+    heartRateVariability = null,
+    spo2 = null,
+    oxygenSaturation = null,
+    stressLevel = null,
+    bodyBattery = null,
+    deviceSource = "HealthConnect",
+  } = payload || {};
+
+  if (!patientId || typeof timestamp !== "number") {
+    return null;
+  }
+
+  return {
+    patientId,
+    timestamp,
+    heartRate,
+    heartRateVariability,
+    spo2: spo2 ?? oxygenSaturation,
+    stressLevel,
+    bodyBattery,
+    deviceSource,
+  };
+}
+
+async function upsertVitalsSnapshot(vital) {
+  const docId = buildVitalsDocumentId(vital.patientId, vital.timestamp);
+  const docRef = db.collection("vital_readings").doc(docId);
+  await docRef.set({ id: docId, ...vital }, { merge: true });
+  return docId;
+}
+
 // ===========================
 // AUTH ENDPOINTS
 // ===========================
@@ -305,6 +345,47 @@ app.post("/patients/:id/vitals", verifyToken, async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// POST /patients/:id/vitals/batch
+app.post("/patients/:id/vitals/batch", verifyToken, async (req, res) => {
+  try {
+    const patientId = req.params.id;
+    const requesterUid = req.uid;
+    const requesterRole = req.role;
+
+    if (requesterUid !== patientId && requesterRole !== "Nurse") {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    if (requesterRole === "Nurse" && requesterUid !== patientId) {
+      const nurseDoc = await db.collection("users").doc(requesterUid).get();
+      const nursePatientIds = nurseDoc.data()?.patientIds || [];
+      if (!nursePatientIds.includes(patientId)) {
+        return res.status(403).json({ error: "Nurse not authorized for this patient" });
+      }
+    }
+
+    const vitalsArray = Array.isArray(req.body?.vitals) ? req.body.vitals : [];
+    if (vitalsArray.length === 0) {
+      return res.status(400).json({ error: "vitals array is required" });
+    }
+
+    const normalized = vitalsArray
+      .map((entry) => normalizeHealthConnectPayload({ ...entry, patientId }))
+      .filter((item) => item);
+
+    if (normalized.length === 0) {
+      return res.status(400).json({ error: "No valid vitals payload" });
+    }
+
+    await Promise.all(normalized.map((vital) => upsertVitalsSnapshot(vital)));
+
+    return res.json({ message: "Vitals batch processed", saved: normalized.length });
+  } catch (err) {
+    console.error("/patients/:id/vitals/batch failed", err);
     return res.status(500).json({ error: "Internal server error" });
   }
 });

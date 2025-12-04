@@ -6,7 +6,9 @@
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-    <uses-permission android:name="android.permission.health.READ_HEARTH_RATE"/>
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
+    <uses-permission android:name="android.permission.health.READ_OXYGEN_SATURATION" />
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE_VARIABILITY" />
     <queries>
         <package android:name="com.google.android.apps.healthdata"/>
     </queries>

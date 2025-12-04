@@ -56,6 +56,15 @@ fun PatientHomeScreen(
         onResult = { granted -> viewModel.onHealthPermissionsResult(granted) }
     )
 
+    val onHealthConnectAction = remember(uiState.healthConnectAction, uiState.healthConnectAvailability) {
+        {
+            viewModel.onHealthConnectCtaClicked(
+                launchPermissions = { permissionLauncher.launch(it) },
+                context = context
+            )
+        }
+    }
+
     LaunchedEffect(uiState.healthConnectMessage) {
         uiState.healthConnectMessage?.let { message ->
             snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Short)
@@ -102,7 +111,11 @@ fun PatientHomeScreen(
             Spacer(Modifier.height(24.dp))
 
             // Vitals
-            VitalsSummaryCard(vitals = uiState.vitals, isLoading = uiState.isLoading)
+            VitalsSummaryCard(
+                vitals = uiState.vitals,
+                isLoading = uiState.isLoading,
+                timestampLabel = uiState.latestVitalsTimestampLabel
+            )
 
             Spacer(Modifier.height(16.dp))
 
@@ -111,32 +124,18 @@ fun PatientHomeScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // Health Connect Status
-            HealthConnectStatusCard(
-                availability = uiState.healthConnectAvailability,
-                isChecking = uiState.isCheckingHealthConnect,
-                onRequestPermissions = { permissionLauncher.launch(viewModel.healthConnectPermissions) },
-                onOpenHealthConnect = { openHealthConnectOrStore(context) },
-                onRefresh = { viewModel.refreshHealthConnectAvailability() }
-            )
-
-            Spacer(Modifier.height(16.dp))
-
             // Action buttons
             PatientActionsSection(
                 onScanPillsClick = { /* TODO */ },
                 onDigitalTwinClick = { /* TODO */ },
                 onHistoryClick = { /* TODO */ },
                 onShowQrClick = { navController.navigate("patient/show_qr_code") },
-                onSyncHealthConnectClick = {
-                    when (uiState.healthConnectAvailability) {
-                        HealthConnectAvailability.InstalledAndAvailable -> viewModel.onSyncHealthConnectNow(context)
-                        HealthConnectAvailability.PermissionsNotGranted -> permissionLauncher.launch(viewModel.healthConnectPermissions)
-                        HealthConnectAvailability.NotInstalled -> openHealthConnectOrStore(context)
-                        HealthConnectAvailability.NotSupported -> viewModel.refreshHealthConnectAvailability()
-                        null -> viewModel.refreshHealthConnectAvailability()
-                    }
-                }
+                healthConnectAvailability = uiState.healthConnectAvailability,
+                isCheckingHealthConnect = uiState.isCheckingHealthConnect,
+                healthConnectCtaLabel = uiState.healthConnectCtaLabel,
+                healthConnectCtaEnabled = uiState.isHealthConnectCtaEnabled,
+                onHealthConnectCtaClick = onHealthConnectAction,
+                shouldShowHealthConnectInfo = uiState.shouldShowHealthConnectInfo
             )
         }
 
@@ -157,6 +156,7 @@ fun PatientHomeScreen(
 fun VitalsSummaryCard(
     vitals: VitalReading?,
     isLoading: Boolean = false,
+    timestampLabel: String = "",
 ) {
     Surface(
         shape = RoundedCornerShape(24.dp),
@@ -172,6 +172,15 @@ fun VitalsSummaryCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
+
+            if (timestampLabel.isNotBlank()) {
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = timestampLabel,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
 
             Spacer(Modifier.height(16.dp))
 
@@ -262,7 +271,12 @@ fun PatientActionsSection(
     onDigitalTwinClick: () -> Unit,
     onHistoryClick: () -> Unit,
     onShowQrClick: () -> Unit,
-    onSyncHealthConnectClick: () -> Unit
+    healthConnectAvailability: HealthConnectAvailability?,
+    isCheckingHealthConnect: Boolean,
+    healthConnectCtaLabel: String,
+    healthConnectCtaEnabled: Boolean,
+    onHealthConnectCtaClick: () -> Unit,
+    shouldShowHealthConnectInfo: Boolean
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(
@@ -291,9 +305,17 @@ fun PatientActionsSection(
             onClick = onShowQrClick
         )
 
+        if (shouldShowHealthConnectInfo || isCheckingHealthConnect) {
+            HealthConnectStatusInfo(
+                availability = healthConnectAvailability,
+                isChecking = isCheckingHealthConnect
+            )
+        }
+
         // Botão de Sincronização Health Connect
         Button(
-            onClick = onSyncHealthConnectClick,
+            onClick = onHealthConnectCtaClick,
+            enabled = healthConnectCtaEnabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -310,7 +332,7 @@ fun PatientActionsSection(
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "Sincronizar Health Connect",
+                text = healthConnectCtaLabel,
                 style = MaterialTheme.typography.labelLarge
             )
         }
@@ -342,17 +364,10 @@ fun PatientActionButton(
 }
 
 @Composable
-fun HealthConnectStatusCard(
+private fun HealthConnectStatusInfo(
     availability: HealthConnectAvailability?,
-    isChecking: Boolean,
-    onRequestPermissions: () -> Unit,
-    onOpenHealthConnect: () -> Unit,
-    onRefresh: () -> Unit
+    isChecking: Boolean
 ) {
-    if (availability == HealthConnectAvailability.InstalledAndAvailable && !isChecking) {
-        return
-    }
-
     Surface(
         shape = RoundedCornerShape(16.dp),
         tonalElevation = 4.dp,
@@ -364,55 +379,26 @@ fun HealthConnectStatusCard(
         ) {
             val title: String
             val body: String
-            val primaryActionLabel: String
-            val primaryAction: () -> Unit
-            val secondaryActionLabel: String?
-            val secondaryAction: (() -> Unit)?
-
             when {
                 isChecking -> {
                     title = "A verificar Health Connect"
                     body = "Estamos a verificar o estado do Health Connect..."
-                    primaryActionLabel = "Aguarde"
-                    primaryAction = {}
-                    secondaryActionLabel = null
-                    secondaryAction = null
                 }
-
                 availability == HealthConnectAvailability.NotInstalled -> {
                     title = "Instale o Health Connect"
                     body = "É necessário instalar o Health Connect para sincronizar os sinais vitais."
-                    primaryActionLabel = "Abrir Play Store"
-                    primaryAction = onOpenHealthConnect
-                    secondaryActionLabel = "Recarregar"
-                    secondaryAction = onRefresh
                 }
-
                 availability == HealthConnectAvailability.PermissionsNotGranted -> {
                     title = "Permissões necessárias"
                     body = "Conceda acesso ao Health Connect para lermos o seu ritmo cardíaco, SpO₂ e HRV."
-                    primaryActionLabel = "Dar permissões"
-                    primaryAction = onRequestPermissions
-                    secondaryActionLabel = "Recarregar"
-                    secondaryAction = onRefresh
                 }
-
                 availability == HealthConnectAvailability.NotSupported -> {
                     title = "Health Connect indisponível"
                     body = "Este dispositivo não suporta o Health Connect."
-                    primaryActionLabel = "Mais tarde"
-                    primaryAction = {}
-                    secondaryActionLabel = "Recarregar"
-                    secondaryAction = onRefresh
                 }
-
                 else -> {
                     title = "Health Connect"
                     body = "Estado desconhecido."
-                    primaryActionLabel = "Recarregar"
-                    primaryAction = onRefresh
-                    secondaryActionLabel = null
-                    secondaryAction = null
                 }
             }
 
@@ -425,22 +411,6 @@ fun HealthConnectStatusCard(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                }
-            } else {
-                Button(
-                    onClick = primaryAction,
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !isChecking
-                ) {
-                    Text(primaryActionLabel)
-                }
-                secondaryActionLabel?.let {
-                    TextButton(
-                        onClick = { secondaryAction?.invoke() },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(it)
-                    }
                 }
             }
         }
