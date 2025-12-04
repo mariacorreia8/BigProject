@@ -139,6 +139,17 @@ fun PatientHomeScreen(
                 }
             )
         }
+
+        if (uiState.stressAlertDialog.visible) {
+            StressAlertDialog(
+                state = uiState.stressAlertDialog,
+                onDismiss = viewModel::dismissStressDialog,
+                onBreathingExercise = {
+                    viewModel.startBreathingExercise()
+                    navController.navigate("patient/breathing")
+                }
+            )
+        }
     }
 }
 
@@ -434,6 +445,35 @@ fun HealthConnectStatusCard(
             }
         }
     }
+}
+
+@Composable
+fun StressAlertDialog(
+    state: StressAlertDialogState,
+    onDismiss: () -> Unit,
+    onBreathingExercise: () -> Unit
+) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Stress elevado") },
+        text = {
+            Column {
+                Text(text = state.message)
+                Spacer(Modifier.height(8.dp))
+                Text(text = "Severidade: ${state.severity}")
+            }
+        },
+        confirmButton = {
+            Button(onClick = onBreathingExercise) {
+                Text(text = "Exercício de respiração")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = "Dispensar")
+            }
+        }
+    )
 }
 
 private fun openHealthConnectOrStore(context: android.content.Context) {

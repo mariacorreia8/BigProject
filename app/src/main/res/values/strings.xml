@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BigProject</string>
+    <string name="notification_channel_stress_name">Alertas de Stress</string>
+    <string name="notification_channel_stress_desc">Notificações quando níveis de stress ficam elevados.</string>
 </resources>

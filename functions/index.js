@@ -391,6 +391,11 @@ app.post("/patients/:id/alerts", verifyToken, async (req, res) => {
     const docRef = await db.collection("stress_alerts").add(alertData);
     await docRef.update({ id: docRef.id });
 
+    await fanOutStressAlert({
+      alert: { id: docRef.id, ...alertData },
+      patientId,
+    });
+
     return res.json({
       message: "Alert created",
       alert: { id: docRef.id, ...alertData },
@@ -401,40 +406,63 @@ app.post("/patients/:id/alerts", verifyToken, async (req, res) => {
   }
 });
 
-// GET /patients/:id/alerts
-app.get("/patients/:id/alerts", verifyToken, async (req, res) => {
+async function fanOutStressAlert({ alert, patientId }) {
   try {
-    const patientId = req.params.id;
-    const requesterUid = req.uid;
-    const requesterRole = req.role;
-
-    if (requesterUid !== patientId && requesterRole !== "Nurse") {
-      return res.status(403).json({ error: "Not authorized" });
+    const patientDoc = await db.collection("users").doc(patientId).get();
+    if (!patientDoc.exists) {
+      console.warn(`Patient ${patientId} not found when fanning out alerts.`);
+      return;
+    }
+    const patientData = patientDoc.data();
+    const nurseIds = patientData.nurseIds || [];
+    if (!Array.isArray(nurseIds) || nurseIds.length === 0) {
+      return;
     }
 
-    if (requesterRole === "Nurse" && requesterUid !== patientId) {
-      const nurseDoc = await db.collection("users").doc(requesterUid).get();
-      const nursePatientIds = nurseDoc.data()?.patientIds || [];
-      if (!nursePatientIds.includes(patientId)) {
-        return res
-          .status(403)
-          .json({ error: "Nurse not authorized for this patient" });
-      }
+    const nurseDocs = await Promise.all(
+      nurseIds.map((nurseId) => db.collection("users").doc(nurseId).get())
+    );
+
+    const tokens = nurseDocs
+      .map((doc) => doc.data()?.fcmTokens || [])
+      .flat()
+      .filter((token) => typeof token === "string" && token.length > 0);
+
+    if (tokens.length === 0) {
+      console.warn("No nurse tokens available for alert fan-out");
+      return;
     }
 
-    const querySnapshot = await db
-      .collection("stress_alerts")
-      .where("patientId", "==", patientId)
-      .orderBy("timestamp", "desc")
-      .get();
+    const message = {
+      notification: {
+        title: `${patientData.name || "Paciente"} stress elevado`,
+        body: alert.message,
+      },
+      data: {
+        patientId,
+        alertId: alert.id,
+        severity: String(alert.severity),
+        timestamp: String(alert.timestamp),
+        type: "STRESS_ALERT",
+      },
+      tokens,
+    };
 
-    const alerts = querySnapshot.docs.map((doc) => doc.data());
-    return res.json({ alerts });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
+    const response = await admin.messaging().sendEachForMulticast(message);
+
+    if (response.failureCount > 0) {
+      const failedTokens = [];
+      response.responses.forEach((resp, index) => {
+        if (!resp.success) {
+          failedTokens.push(tokens[index]);
+        }
+      });
+      console.warn("Failed to deliver messages to:", failedTokens);
+    }
+  } catch (error) {
+    console.error("fanOutStressAlert failed", error);
   }
-});
+}
 
 // ===========================
 // PILL IDENTIFY (DEMO)
@@ -661,6 +689,36 @@ app.post("/patients/search", verifyToken, async (req, res) => {
     });
   } catch (err) {
     console.error("Erro em /patients/search:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ===========================
+// MESSAGING
+// ===========================
+
+// POST /messaging/token
+app.post("/messaging/token", verifyToken, async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({ error: "Missing token" });
+    }
+
+    await db
+      .collection("users")
+      .doc(req.uid)
+      .set(
+        {
+          fcmTokens: admin.firestore.FieldValue.arrayUnion(token),
+          updatedAt: Date.now(),
+        },
+        { merge: true }
+      );
+
+    return res.json({ success: true });
+  } catch (error) {
+    console.error("/messaging/token failed", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });

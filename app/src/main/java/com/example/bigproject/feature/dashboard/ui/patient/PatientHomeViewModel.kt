@@ -6,9 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bigproject.core.domain.model.VitalReading
 import com.example.bigproject.core.domain.repository.AuthRepository
+import com.example.bigproject.core.domain.stress.StressAnalyzer
 import com.example.bigproject.core.domain.usecase.dashboard.GetLastVitalReadingUseCase
+import com.example.bigproject.core.domain.usecase.dashboard.TriggerStressAlertUseCase
 import com.example.bigproject.data.healthconnect.HealthConnectAvailability
 import com.example.bigproject.data.healthconnect.HealthConnectManager
+import com.example.bigproject.feature.dashboard.stress.StressAlertHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,8 +28,20 @@ data class PatientHomeUiState(
     val stressLevel: StressLevel = StressLevel.Calm,
     val healthConnectAvailability: HealthConnectAvailability? = null,
     val isCheckingHealthConnect: Boolean = false,
-    val healthConnectMessage: String? = null
+    val healthConnectMessage: String? = null,
+    val stressAlertDialog: StressAlertDialogState = StressAlertDialogState.Hidden
 )
+
+data class StressAlertDialogState(
+    val alertId: String = "",
+    val message: String = "",
+    val severity: Int = 0,
+    val visible: Boolean = false
+) {
+    companion object {
+        val Hidden = StressAlertDialogState()
+    }
+}
 
 enum class StressLevel(
     val color: Color,
@@ -42,6 +57,9 @@ class PatientHomeViewModel @Inject constructor(
     private val getLastVitalReadingUseCase: GetLastVitalReadingUseCase,
     private val authRepository: AuthRepository,
     private val healthConnectManager: HealthConnectManager,
+    private val stressAnalyzer: StressAnalyzer,
+    private val stressAlertHandler: StressAlertHandler,
+    private val triggerStressAlertUseCase: TriggerStressAlertUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PatientHomeUiState())
@@ -52,6 +70,11 @@ class PatientHomeViewModel @Inject constructor(
 
     init {
         refreshHealthConnectAvailability()
+        observeStressAlerts()
+        observeVitals()
+    }
+
+    private fun observeVitals() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val user = authRepository.getCurrentUser()
@@ -72,6 +95,13 @@ class PatientHomeViewModel @Inject constructor(
                             }
                         )
                     }
+                    user?.let {
+                        val alert = stressAnalyzer.evaluate(reading, it.id, it.name)
+                        if (alert != null) {
+                            stressAlertHandler.handle(alert)
+                            triggerBackendAlert(alert)
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 _uiState.update {
@@ -80,6 +110,45 @@ class PatientHomeViewModel @Inject constructor(
                         error = e.message ?: "Ocorreu um erro desconhecido"
                     )
                 }
+            }
+        }
+    }
+
+    private fun observeStressAlerts() {
+        viewModelScope.launch {
+            stressAlertHandler.latestAlert.collect { alert ->
+                if (alert != null) {
+                    _uiState.update {
+                        it.copy(
+                            stressAlertDialog = StressAlertDialogState(
+                                alertId = alert.id,
+                                message = alert.message,
+                                severity = alert.severity,
+                                visible = true
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun dismissStressDialog() {
+        stressAlertHandler.clear()
+        _uiState.update { it.copy(stressAlertDialog = StressAlertDialogState.Hidden) }
+    }
+
+    fun startBreathingExercise() {
+        // Placeholder hook for actual exercise flow
+        dismissStressDialog()
+    }
+
+    private fun triggerBackendAlert(alert: com.example.bigproject.core.domain.model.StressAlert) {
+        viewModelScope.launch {
+            try {
+                triggerStressAlertUseCase(alert)
+            } catch (e: Exception) {
+                Log.e("PatientHomeViewModel", "Falha ao enviar alerta", e)
             }
         }
     }

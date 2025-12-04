@@ -7,6 +7,8 @@ interface AuthRepository {
     fun saveUser(user: AppUser)
     fun saveToken(token: String)
     fun getToken(): String?
+    fun saveMessagingToken(token: String)
+    fun getMessagingToken(): String?
     suspend fun createSessionToken(): Result<String>
     fun clear()
 }

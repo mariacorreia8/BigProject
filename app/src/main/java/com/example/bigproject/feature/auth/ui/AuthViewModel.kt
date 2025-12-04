@@ -7,6 +7,7 @@ import com.example.bigproject.core.domain.model.user.Nurse
 import com.example.bigproject.core.domain.model.user.Patient
 import com.example.bigproject.core.domain.model.user.UserRole
 import com.example.bigproject.core.domain.repository.AuthRepository
+import com.example.bigproject.core.domain.repository.MessagingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -23,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val client: HttpClient
+    private val client: HttpClient,
+    private val messagingRepository: MessagingRepository
 ) : ViewModel() {
 
     private val apiBaseUrl = "http://10.0.2.2:5001/bigproject-4a536/us-central1/api"
@@ -63,6 +65,7 @@ class AuthViewModel @Inject constructor(
                 val user = response.user.toAppUser()
                 authRepository.saveUser(user)
                 _userData.value = user
+                registerMessagingToken()
                 _registerState.value = RegisterState.Success
                 _loginState.value = LoginState.Success
             } catch (e: Exception) {
@@ -84,6 +87,7 @@ class AuthViewModel @Inject constructor(
                 val user = response.user.toAppUser()
                 authRepository.saveUser(user)
                 _userData.value = user
+                registerMessagingToken()
                 _loginState.value = LoginState.Success
             } catch (e: Exception) {
                 _loginState.value = LoginState.Error(e.message ?: "Falha no login")
@@ -99,6 +103,14 @@ class AuthViewModel @Inject constructor(
     }
 
     fun isUserLoggedIn(): Boolean = authRepository.getToken() != null
+
+    private fun registerMessagingToken() {
+        viewModelScope.launch {
+            authRepository.getMessagingToken()?.let {
+                messagingRepository.registerToken(it)
+            }
+        }
+    }
 }
 
 @Serializable
