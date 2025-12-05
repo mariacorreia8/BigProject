@@ -17,3 +17,4 @@ venv/
 .venv/
 venv3/
 .idea/
+*.log
