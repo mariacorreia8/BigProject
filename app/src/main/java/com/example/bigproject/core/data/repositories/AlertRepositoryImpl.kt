@@ -19,10 +19,9 @@ import javax.inject.Singleton
 @Singleton
 class AlertRepositoryImpl @Inject constructor(
     private val httpClient: HttpClient,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val apiBaseUrl: String
 ) : AlertRepository {
-
-    private val apiBaseUrl = "http://10.0.2.2:5001/bigproject-4a536/us-central1/api"
 
     override suspend fun sendStressAlert(alert: StressAlert) {
         val token = authRepository.getToken() ?: return

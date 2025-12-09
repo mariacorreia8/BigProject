@@ -25,10 +25,10 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val client: HttpClient,
-    private val messagingRepository: MessagingRepository
+    private val messagingRepository: MessagingRepository,
+    private val apiBaseUrl: String
 ) : ViewModel() {
 
-    private val apiBaseUrl = "http://10.0.2.2:5001/bigproject-4a536/us-central1/api"
 
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState

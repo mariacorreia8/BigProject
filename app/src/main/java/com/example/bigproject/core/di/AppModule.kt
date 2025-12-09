@@ -1,5 +1,7 @@
 package com.example.bigproject.core.di
 
+import android.content.Context
+import com.example.bigproject.R
 import com.example.bigproject.core.data.repositories.AuthRepositoryImpl
 import com.example.bigproject.core.domain.repository.NurseHomeRepository
 import com.example.bigproject.core.data.repositories.NurseHomeRepositoryImpl
@@ -51,6 +53,11 @@ object AppModule {
             }
         }
     }
+
+    @Provides
+    @Singleton
+    fun provideApiBaseUrl(@ApplicationContext context: Context): String =
+        context.getString(R.string.api_base_url)
 
     @Provides
     @Singleton

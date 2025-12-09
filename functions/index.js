@@ -8,9 +8,16 @@ const { v4: uuidv4 } = require("uuid");
 
 admin.initializeApp();
 
-// Emuladores (útil quando corres localmente)
-process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.FIREBASE_AUTH_EMULATOR_HOST || "localhost:9099";
-process.env.FIRESTORE_EMULATOR_HOST = process.env.FIRESTORE_EMULATOR_HOST || "localhost:8080";
+const IDENTITY_BASE_URL = "https://identitytoolkit.googleapis.com/v1";
+const WEB_API_KEY = process.env.IDENTITY_WEB_API_KEY;
+
+function buildIdentityToolkitUrl(resource) {
+  if (!WEB_API_KEY) {
+    throw new Error("IDENTITY_WEB_API_KEY env var not set");
+  }
+  return `${IDENTITY_BASE_URL}${resource}?key=${WEB_API_KEY}`;
+}
+
 
 const db = admin.firestore();
 const app = express();
@@ -134,8 +141,7 @@ app.post("/auth/register", async (req, res) => {
     await db.collection("users").doc(uid).set(userData);
 
     // Obter ID Token via Auth REST Emulator
-    const authHost = process.env.FIREBASE_AUTH_EMULATOR_HOST || "localhost:9099";
-    const signInUrl = `http://${authHost}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=fake-api-key`;
+    const signInUrl = buildIdentityToolkitUrl("/accounts:signInWithPassword");
 
     const resp = await axios.post(signInUrl, {
       email,
@@ -166,8 +172,7 @@ app.post("/auth/login", async (req, res) => {
       return res.status(400).json({ error: "Missing email or password" });
     }
 
-    const authHost = process.env.FIREBASE_AUTH_EMULATOR_HOST || "localhost:9099";
-    const signInUrl = `http://${authHost}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=fake-api-key`;
+    const signInUrl = buildIdentityToolkitUrl("/accounts:signInWithPassword");
 
     const resp = await axios.post(signInUrl, {
       email,

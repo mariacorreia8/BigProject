@@ -22,13 +22,9 @@ data class ResolveQrTokenRequest(val qrToken: String)
 class NurseHomeRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val httpClient: HttpClient,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val apiBaseUrl: String
 ) : NurseHomeRepository {
-
-    companion object {
-        private const val API_BASE_URL =
-            "http://10.0.2.2:5001/bigproject-4a536/us-central1/api"
-    }
 
     override suspend fun getPatients(): List<Patient> {
         return try {
@@ -56,7 +52,7 @@ class NurseHomeRepositoryImpl @Inject constructor(
             val nurseAuthToken = authRepository.getToken()
                 ?: return Result.failure(Exception("Nurse not authenticated"))
 
-            val response = httpClient.post("$API_BASE_URL/nurse/resolve-qr-token") {
+            val response = httpClient.post("$apiBaseUrl/nurse/resolve-qr-token") {
                 contentType(ContentType.Application.Json)
                 bearerAuth(nurseAuthToken)
                 setBody(ResolveQrTokenRequest(qrToken))

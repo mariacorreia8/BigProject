@@ -2,4 +2,5 @@
     <string name="app_name">BigProject</string>
     <string name="notification_channel_stress_name">Alertas de Stress</string>
     <string name="notification_channel_stress_desc">Notificações quando níveis de stress ficam elevados.</string>
+    <string name="api_base_url">https://us-central1-bigproject-4a536.cloudfunctions.net/api</string>
 </resources>

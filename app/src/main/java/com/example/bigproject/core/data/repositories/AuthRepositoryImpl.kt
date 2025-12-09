@@ -26,9 +26,9 @@ data class SessionTokenResponse(val token: String)
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val apiBaseUrl: String
 ) : AuthRepository {
-    private val apiBaseUrl = "http://10.0.2.2:5001/bigproject-4a536/us-central1/api"
     private val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
 
     private val sharedPreferences = EncryptedSharedPreferences.create(
