@@ -81,11 +81,21 @@ class PatientHomeViewModel @Inject constructor(
     val healthConnectPermissions: Set<String> = healthConnectManager.permissions
 
     private var pendingPermissionResultCallback: ((Set<String>) -> Unit)? = null
+    private var shouldAutoRequestPermissions = false
 
     init {
         refreshHealthConnectAvailability()
         observeStressAlerts()
         observeVitals()
+    }
+
+    fun setShouldAutoRequestPermissions(value: Boolean) {
+        shouldAutoRequestPermissions = value
+    }
+
+    fun shouldTriggerPermissionRequest(): Boolean {
+        return shouldAutoRequestPermissions &&
+               uiState.value.healthConnectAvailability == HealthConnectAvailability.PermissionsNotGranted
     }
 
     private fun observeVitals() {
@@ -267,6 +277,12 @@ class PatientHomeViewModel @Inject constructor(
         }
         runCatching { healthConnectManager.getAvailability() }
             .onSuccess { availability ->
+                // Se for primeira verificação e não tiver permissões, marcar para auto-request
+                if (availability == HealthConnectAvailability.PermissionsNotGranted &&
+                    _uiState.value.healthConnectAvailability == null) {
+                    shouldAutoRequestPermissions = true
+                }
+
                 _uiState.update {
                     val ctaState = buildHealthConnectCtaState(availability)
                     it.copy(

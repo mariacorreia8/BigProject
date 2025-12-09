@@ -71,6 +71,14 @@ fun PatientHomeScreen(
         }
     }
 
+    // Auto-request Health Connect permissions on first load if not granted
+    LaunchedEffect(uiState.healthConnectAvailability) {
+        if (viewModel.shouldTriggerPermissionRequest()) {
+            viewModel.setShouldAutoRequestPermissions(false) // Reset flag to avoid repeated requests
+            permissionLauncher.launch(viewModel.healthConnectPermissions)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
