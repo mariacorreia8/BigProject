@@ -7,23 +7,20 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import io.ktor.client.*
-import io.ktor.client.call.body
-import io.ktor.client.request.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.serialization.Serializable
 import com.example.bigproject.models.VitalReading
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
+import com.google.firebase.firestore.FieldValue
 
 
 class AuthViewModel(
-    private val client: HttpClient // Ktor client
+    private val client: HttpClient // Ktor client for API calls
 ) : ViewModel() {
 
-    private val apiBaseUrl = "http://10.0.2.2:5001/bigproject-4a536/us-central1/api"
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     // === ESTADOS ===
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
@@ -35,48 +32,77 @@ class AuthViewModel(
     private val _userData = MutableStateFlow<UserData?>(null)
     val userData: StateFlow<UserData?> = _userData
 
-    private var _idToken: String? = null
-    fun getIdToken(): String? = _idToken
-
     data class UserData(val name: String, val role: String)
 
-    // === REGISTO VIA API ===
+    init {
+        // Load user data if already logged in
+        loadCurrentUserData()
+    }
+
+    // === CARREGAR DADOS DO UTILIZADOR ATUAL ===
+    private fun loadCurrentUserData() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            viewModelScope.launch {
+                fetchUserDataFromFirestore(currentUser.uid)
+            }
+        }
+    }
+
+    // === BUSCAR DADOS DO UTILIZADOR NO FIRESTORE ===
+    private suspend fun fetchUserDataFromFirestore(uid: String) {
+        try {
+            val doc = firestore.collection("users").document(uid).get().await()
+            if (doc.exists()) {
+                val name = doc.getString("name") ?: ""
+                val role = doc.getString("role") ?: ""
+                _userData.value = UserData(name, role)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    // === REGISTO COM FIREBASE AUTH ===
     fun register(email: String, password: String, name: String, role: String) {
         viewModelScope.launch {
             _registerState.value = RegisterState.Loading
             try {
-                val response: ApiAuthResponse = client.post("$apiBaseUrl/auth/register") {
-                    contentType(ContentType.Application.Json)
-                    setBody(mapOf(
-                        "email" to email,
-                        "password" to password,
-                        "name" to name,
-                        "role" to role
-                    ))
-                }.body()
+                // Criar utilizador no Firebase Auth
+                val result = auth.createUserWithEmailAndPassword(email, password).await()
+                val user = result.user ?: throw Exception("User creation failed")
+                val uid = user.uid
 
-                _idToken = response.idToken
-                _userData.value = UserData(response.user.name, response.user.role)
+                // Criar documento no Firestore com name e role
+                val userData = mapOf(
+                    "id" to uid,
+                    "name" to name,
+                    "email" to email,
+                    "role" to role,
+                    "createdAt" to FieldValue.serverTimestamp()
+                )
+                firestore.collection("users").document(uid).set(userData).await()
+
+                // Carregar dados do utilizador
+                _userData.value = UserData(name, role)
                 _registerState.value = RegisterState.Success
-                _loginState.value = LoginState.Success
+                _loginState.value = LoginState.Success // login automático após registo
             } catch (e: Exception) {
                 _registerState.value = RegisterState.Error(e.message ?: "Falha no registo")
             }
         }
     }
 
-    // === LOGIN VIA API ===
+    // === LOGIN COM FIREBASE AUTH ===
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
             try {
-                val response: ApiAuthResponse = client.post("$apiBaseUrl/auth/login") {
-                    contentType(ContentType.Application.Json)
-                    setBody(mapOf("email" to email, "password" to password))
-                }.body()
-
-                _idToken = response.idToken
-                _userData.value = UserData(response.user.name, response.user.role)
+                auth.signInWithEmailAndPassword(email, password).await()
+                val user = auth.currentUser
+                if (user != null) {
+                    fetchUserDataFromFirestore(user.uid)
+                }
                 _loginState.value = LoginState.Success
             } catch (e: Exception) {
                 _loginState.value = LoginState.Error(e.message ?: "Falha no login")
@@ -86,20 +112,29 @@ class AuthViewModel(
 
     // === LOGOUT ===
     fun logout() {
-        _idToken = null
+        auth.signOut()
         _userData.value = null
         _loginState.value = LoginState.Idle
         _registerState.value = RegisterState.Idle
     }
 
-    fun isUserLoggedIn(): Boolean = _idToken != null
+    // === OBTER ID TOKEN PARA API CALLS ===
+    suspend fun getIdToken(): String? {
+        return try {
+            val tokenResult = auth.currentUser?.getIdToken(false)?.await()
+            tokenResult?.token
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun isUserLoggedIn(): Boolean = auth.currentUser != null
 
 
 
-    // === BUSCAR PACIENTE POR EMAIL (via Firestore local) ===
+    // === BUSCAR PACIENTE POR EMAIL (via Firestore) ===
     suspend fun getPatientByEmail(email: String): PatientData? {
         return try {
-            val firestore = FirebaseFirestore.getInstance()
             val snapshot = firestore.collection("users")
                 .whereEqualTo("email", email)
                 .whereEqualTo("role", "Patient")
@@ -120,7 +155,6 @@ class AuthViewModel(
     // === BUSCAR ÚLTIMA LEITURA VITAL ===
     suspend fun getLatestVitalReading(patientId: String): VitalReading? {
         return try {
-            val firestore = FirebaseFirestore.getInstance()
             val snapshot = firestore.collection("vital_readings")
                 .whereEqualTo("patientId", patientId)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -145,21 +179,7 @@ class AuthViewModel(
     }
 }
 
-// === MODELOS DA API ===
-@Serializable
-data class ApiAuthResponse(
-    val idToken: String,
-    val user: ApiUserData
-)
-
-@Serializable
-data class ApiUserData(
-    val id: String,
-    val name: String,
-    val email: String,
-    val role: String
-)
-
+// === MODELOS ===
 data class PatientData(
     val name: String,
     val email: String,

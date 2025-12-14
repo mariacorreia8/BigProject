@@ -10,8 +10,14 @@ const { v4: uuidv4 } = require("uuid");
 
 admin.initializeApp();
 
-process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.FIREBASE_AUTH_EMULATOR_HOST || "localhost:9099";
-process.env.FIRESTORE_EMULATOR_HOST = process.env.FIRESTORE_EMULATOR_HOST || "localhost:8080";
+// Only use emulators if explicitly set (for local development)
+// In production, these will be undefined and Firebase will use the real services
+if (!process.env.FIREBASE_AUTH_EMULATOR_HOST) {
+  delete process.env.FIREBASE_AUTH_EMULATOR_HOST;
+}
+if (!process.env.FIRESTORE_EMULATOR_HOST) {
+  delete process.env.FIRESTORE_EMULATOR_HOST;
+}
 
 const db = admin.firestore();
 const app = express();
@@ -83,17 +89,35 @@ app.post("/auth/register", async (req, res) => {
 
     await db.collection("users").doc(uid).set(userData);
 
-    // Obter ID Token via Auth REST Emulator
-    const authHost = process.env.FIREBASE_AUTH_EMULATOR_HOST || "localhost:9099";
-    const signInUrl = `http://${authHost}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=fake-api-key`;
-
-    const resp = await axios.post(signInUrl, {
-      email,
-      password,
-      returnSecureToken: true
-    });
-
-    const idToken = resp.data.idToken;
+    // Obter ID Token via Firebase Auth
+    let idToken;
+    if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
+      // Local emulator
+      const authHost = process.env.FIREBASE_AUTH_EMULATOR_HOST;
+      const signInUrl = `http://${authHost}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=fake-api-key`;
+      const resp = await axios.post(signInUrl, {
+        email,
+        password,
+        returnSecureToken: true
+      });
+      idToken = resp.data.idToken;
+    } else {
+      // Production: Use Firebase Auth REST API
+      // Get API key from Firebase config or environment variable
+      const apiKey = functions.config().firebase?.apiKey || process.env.FIREBASE_API_KEY;
+      if (!apiKey) {
+        // Fallback: Create custom token (client will need to exchange it)
+        idToken = await admin.auth().createCustomToken(uid);
+      } else {
+        const signInUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
+        const resp = await axios.post(signInUrl, {
+          email,
+          password,
+          returnSecureToken: true
+        });
+        idToken = resp.data.idToken;
+      }
+    }
 
     return res.json({ idToken, user: userData });
   } catch (error) {
@@ -111,17 +135,45 @@ app.post("/auth/login", async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Missing email or password" });
 
-    const authHost = process.env.FIREBASE_AUTH_EMULATOR_HOST || "localhost:9099";
-    const signInUrl = `http://${authHost}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=fake-api-key`;
-
-    const resp = await axios.post(signInUrl, {
-      email,
-      password,
-      returnSecureToken: true
-    });
-
-    const idToken = resp.data.idToken;
-    const uid = resp.data.localId;
+    let idToken;
+    let uid;
+    
+    if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
+      // Local emulator
+      const authHost = process.env.FIREBASE_AUTH_EMULATOR_HOST;
+      const signInUrl = `http://${authHost}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=fake-api-key`;
+      const resp = await axios.post(signInUrl, {
+        email,
+        password,
+        returnSecureToken: true
+      });
+      idToken = resp.data.idToken;
+      uid = resp.data.localId;
+    } else {
+      // Production: Use Firebase Auth REST API
+      const apiKey = functions.config().firebase?.apiKey || process.env.FIREBASE_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ error: "Firebase API key not configured. Please set FIREBASE_API_KEY environment variable." });
+      }
+      
+      try {
+        const signInUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
+        const resp = await axios.post(signInUrl, {
+          email,
+          password,
+          returnSecureToken: true
+        });
+        idToken = resp.data.idToken;
+        uid = resp.data.localId;
+      } catch (error) {
+        const errData = error?.response?.data;
+        if (errData && errData.error) {
+          const errorMsg = errData.error.message || "Invalid email or password";
+          return res.status(400).json({ error: errorMsg });
+        }
+        throw error;
+      }
+    }
 
     const userDoc = await getUserDocByUid(uid);
     if (!userDoc) return res.status(404).json({ error: "User doc not found" });
