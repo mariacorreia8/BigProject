@@ -2,8 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.dagger.hilt)
+    id("kotlin-kapt")
     id("com.google.gms.google-services")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
+
 }
 
 android {
@@ -30,14 +33,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
+    }
+    kapt {
+        correctErrorTypes = true
     }
 }
 
@@ -57,6 +63,11 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.connect.client)
+    implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.hilt.compiler)
+    implementation(libs.androidx.hilt.work)
     //implementation(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -73,10 +84,37 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
 
-    implementation("io.ktor:ktor-client-core:2.3.5")
     implementation("io.ktor:ktor-client-android:2.3.5")
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.5")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("androidx.security:security-crypto:1.0.0")
+    //health connect api
+    implementation("androidx.health.connect:connect-client:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
+    implementation("io.ktor:ktor-client-cio:2.3.7")
+    implementation("io.ktor:ktor-client-logging:2.3.7")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+    // Hilt base
+    implementation ("com.google.dagger:hilt-android:2.52")
+    kapt ("com.google.dagger:hilt-android-compiler:2.52")
+
+    // Hilt + WorkManager (para o Worker funcionar com Hilt)
+    implementation ("androidx.hilt:hilt-work:1.2.0")
+    kapt ("androidx.hilt:hilt-compiler:1.2.0")
+
+    // WorkManager
+    implementation ("androidx.work:work-runtime-ktx:2.9.0")
+
+    implementation(libs.zxing.core)
+    implementation(libs.mlkit.barcode.scanning)
+    implementation("io.github.g0dkar:qrcode-kotlin:4.5.0")
+
+    val cameraxVersion = "1.3.1"
+    implementation("androidx.camera:camera-core:${cameraxVersion}")
+    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
+    implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
+    implementation("androidx.camera:camera-view:${cameraxVersion}")
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation(kotlin("test"))
 }
