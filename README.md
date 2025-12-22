@@ -43,11 +43,17 @@ Then, select a target device in Android Studio and click the "Run" button ▶️
 ## 🗂️ Project Structure
 
 BigProject/
+
 ├── app/ # Main Android app source code
+
 ├── data/ # Data models and repository implementations
+
 ├── domain/ # Business logic and use cases
+
 ├── firebase/ # Firebase configuration and emulator setup
+
 ├── README.md # Project documentation
+
 └── ... # Other supporting files
 
 

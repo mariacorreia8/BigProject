@@ -67,7 +67,7 @@ fun ScanPatientScreen(
                         try {
                             val token = authViewModel.getIdToken() ?: throw Exception("Sem token")
 
-                            val response: ApiPatientResponse = client.post("$apiBaseUrl/patients/search") {
+                            val response: ApiPatientResponse = client.post("https://us-central1-bigproject-4a536.cloudfunctions.net/api/patients/search") {
                                 headers { append("Authorization", "Bearer $token") }
                                 contentType(ContentType.Application.Json)
                                 setBody(mapOf("email" to email.trim()))
