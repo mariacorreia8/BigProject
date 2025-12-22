@@ -16,11 +16,11 @@ import com.example.bigproject.feature.auth.ui.LoginScreen
 import com.example.bigproject.feature.auth.ui.RegisterScreen
 import com.example.bigproject.feature.dashboard.ui.patient.DigitalTwinScreen
 import com.example.bigproject.feature.dashboard.ui.nurse.NurseHomeScreen
+import com.example.bigproject.feature.dashboard.ui.nurse.NursePatientDashboard
 import com.example.bigproject.feature.dashboard.ui.patient.PatientHomeScreen
 import com.example.bigproject.feature.pillscanner.ui.PillScanScreen
 import com.example.bigproject.feature.dashboard.ui.settings.SettingsScreen
 import com.example.bigproject.feature.qr.ui.ShowQrCodeScreen
-import com.example.bigproject.feature.dashboard.ui.nurse.NursePatientDashboardScreen
 import com.example.bigproject.feature.qr.ui.ScanQrScreen
 import com.example.bigproject.feature.dashboard.ui.patient.BreathingExerciseScreen
 
@@ -89,7 +89,7 @@ fun NavGraph(notificationPatientId: String? = null) {
         ) { backStackEntry ->
             val patientId = backStackEntry.arguments?.getString("patientId")
             if (patientId != null) {
-                NursePatientDashboardScreen(patientId = patientId)
+                NursePatientDashboard(patientId = patientId)
             }
         }
 
