@@ -2,13 +2,19 @@ package com.example.bigproject.feature.dashboard.ui.nurse
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.bigproject.core.domain.model.StressAlert
+import com.example.bigproject.core.domain.model.VitalReading
+import com.example.bigproject.core.domain.repository.AlertRepository
 import com.example.bigproject.core.domain.repository.NurseHomeRepository
+import com.example.bigproject.core.domain.repository.PatientRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 data class PatientUiState(
@@ -32,11 +38,13 @@ data class NurseHomeUiState(
 
 @HiltViewModel
 class NurseHomeViewModel @Inject constructor(
-    private val nurseHomeRepository: NurseHomeRepository
+    private val nurseHomeRepository: NurseHomeRepository,
+    private val patientRepository: PatientRepository,
+    private val alertRepository: AlertRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(NurseHomeUiState())
-    val uiState: StateFlow<NurseHomeUiState> = _uiState.asStateFlow()
+    private val _uiState = kotlinx.coroutines.flow.MutableStateFlow(NurseHomeUiState())
+    val uiState: kotlinx.coroutines.flow.StateFlow<NurseHomeUiState> = _uiState.asStateFlow()
 
     init {
         loadNurseHomeData()
@@ -44,18 +52,28 @@ class NurseHomeViewModel @Inject constructor(
 
     private fun loadNurseHomeData() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, error = null) }
             try {
-                // Using hardcoded data for now to populate the UI
-                val patientUiStates = listOf(
-                    PatientUiState("1", "João Silva", "PA: 120/80, FC: 75", "Sem novos alertas"),
-                    PatientUiState("2", "Maria Santos", "PA: 130/85, FC: 80", "Medicação em atraso"),
-                    PatientUiState("3", "Carlos Pereira", "PA: 110/70, FC: 65", "Sem novos alertas"),
-                    PatientUiState("4", "Ana Ferreira", "PA: 140/90, FC: 90", "Frequência cardíaca alta"),
-                    PatientUiState("5", "Pedro Rodrigues", "PA: 125/82, FC: 78", "Sem novos alertas")
-                )
+                val patients = nurseHomeRepository.getPatients()
 
-                val alertCount = patientUiStates.count { it.lastAlert != "Sem novos alertas" }
+                val patientUiStates = patients.map { patient ->
+                    val latestVitals = runCatching {
+                        patientRepository.getLatestVitals(patient.id).firstOrNull()
+                    }.getOrNull()
+
+                    val latestAlert = runCatching {
+                        alertRepository.getStressAlerts(patient.id).firstOrNull()?.maxByOrNull { it.timestamp }
+                    }.getOrNull()
+
+                    PatientUiState(
+                        id = patient.id,
+                        name = patient.name,
+                        lastVitals = latestVitals.toCardVitalsString(),
+                        lastAlert = latestAlert.toCardAlertString()
+                    )
+                }
+
+                val alertCount = patientUiStates.count { it.lastAlert != NO_ALERTS }
 
                 _uiState.update {
                     it.copy(
@@ -76,5 +94,24 @@ class NurseHomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun VitalReading?.toCardVitalsString(): String {
+        if (this == null) return NO_VITALS
+        // Keep it compact; UI can format more later.
+        return "FC: ${heartRate} | SpO₂: ${spo2} | Stress: ${stressLevel}"
+    }
+
+    private fun StressAlert?.toCardAlertString(): String {
+        if (this == null) return NO_ALERTS
+        val time = runCatching {
+            SimpleDateFormat("dd/MM HH:mm", Locale.getDefault()).format(Date(timestamp))
+        }.getOrNull()
+        return if (time != null) "${message} ($time)" else message
+    }
+
+    private companion object {
+        const val NO_ALERTS = "Sem novos alertas"
+        const val NO_VITALS = "Sem vitals"
     }
 }
