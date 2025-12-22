@@ -15,8 +15,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.bigproject"
-        minSdk = 33
-        targetSdk = 36
+        minSdk = 31
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
 
@@ -81,6 +81,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     implementation("com.google.firebase:firebase-firestore-ktx:24.10.0")
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
 
@@ -89,7 +90,7 @@ dependencies {
     implementation("androidx.security:security-crypto:1.0.0")
     //health connect api
     implementation("androidx.health.connect:connect-client:1.1.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     implementation("io.ktor:ktor-client-cio:2.3.7")
     implementation("io.ktor:ktor-client-logging:2.3.7")

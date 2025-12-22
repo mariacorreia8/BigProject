@@ -22,16 +22,17 @@ import com.example.bigproject.feature.dashboard.ui.settings.SettingsScreen
 import com.example.bigproject.feature.qr.ui.ShowQrCodeScreen
 import com.example.bigproject.feature.dashboard.ui.nurse.NursePatientDashboardScreen
 import com.example.bigproject.feature.qr.ui.ScanQrScreen
+import com.example.bigproject.feature.dashboard.ui.patient.BreathingExerciseScreen
 
 @Composable
-fun NavGraph() {
+fun NavGraph(notificationPatientId: String? = null) {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = hiltViewModel()
     val userData by authViewModel.userData.collectAsState()
 
     val startDestination = when {
         !authViewModel.isUserLoggedIn() -> "auth_entry"
-        userData?.role == UserRole.Nurse -> "nurse/home"
+        userData?.role == UserRole.Nurse -> if (notificationPatientId != null) "nurse/patientDashboard/${notificationPatientId}" else "nurse/home"
         userData?.role == UserRole.Patient -> "patient/home"
         else -> "auth_entry"
     }
@@ -116,6 +117,10 @@ fun NavGraph() {
 
         composable("settings") {
             SettingsScreen()
+        }
+
+        composable("patient/breathing") {
+            BreathingExerciseScreen(navController = navController)
         }
     }
 }

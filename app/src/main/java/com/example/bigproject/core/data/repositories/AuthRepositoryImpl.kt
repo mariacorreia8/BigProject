@@ -13,6 +13,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -24,9 +26,9 @@ data class SessionTokenResponse(val token: String)
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val apiBaseUrl: String
 ) : AuthRepository {
-    private val apiBaseUrl = "http://10.0.2.2:5001/bigproject-4a536/us-central1/api"
     private val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
 
     private val sharedPreferences = EncryptedSharedPreferences.create(
@@ -45,10 +47,18 @@ class AuthRepositoryImpl @Inject constructor(
         return sharedPreferences.getString("auth_token", null)
     }
 
+    override fun saveMessagingToken(token: String) {
+        sharedPreferences.edit().putString("messaging_token", token).apply()
+    }
+
+    override fun getMessagingToken(): String? {
+        return sharedPreferences.getString("messaging_token", null)
+    }
+
     override suspend fun createSessionToken(): Result<String> {
         return try {
             val authToken = getToken() ?: return Result.failure(Exception("User not authenticated"))
-            val response = httpClient.post("https://$apiBaseUrl/patient-session/token") {
+            val response = httpClient.post("$apiBaseUrl/patient-session/token") {
                 bearerAuth(authToken)
             }
             if (response.status.value in 200..299) {

@@ -36,9 +36,11 @@ class MainActivity : ComponentActivity() {
         FirebaseApp.initializeApp(this)
         enableEdgeToEdge()
 
+        val notificationPatientId = intent?.getStringExtra("notification_patient_id")
+
         setContent {
             BigProjectTheme {
-                NavGraph()
+                NavGraph(notificationPatientId = notificationPatientId)
             }
         }
     }

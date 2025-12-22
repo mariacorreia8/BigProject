@@ -5,45 +5,48 @@ import com.example.bigproject.core.domain.model.VitalReading
 import com.example.bigproject.core.domain.model.user.AppUser
 import com.example.bigproject.core.domain.model.user.Patient
 import com.example.bigproject.core.domain.repository.PatientRepository
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import javax.inject.Inject
-import kotlin.random.Random
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 
-class PatientRepositoryImpl @Inject constructor() : PatientRepository {
-    // Corrected to accept patientId
-    override suspend fun getLatestVitals(patientId: String): Flow<VitalReading> = flow {
-        // patientId is unused in this mock implementation
-        while (true) {
-            val reading = VitalReading(
-                heartRate = Random.Default.nextInt(60, 110),
-                spo2 = Random.Default.nextInt(95, 100),
-                stressLevel = Random.Default.nextInt(10, 80)
-            )
-            emit(reading)
-            delay(5000) // Emit a new reading every 5 seconds
-        }
+private const val VITALS_COLLECTION = "vital_readings"
+
+class PatientRepositoryImpl @Inject constructor(
+    private val firestore: FirebaseFirestore
+) : PatientRepository {
+    override suspend fun getLatestVitals(patientId: String): Flow<VitalReading> = callbackFlow {
+        val registration = firestore.collection(VITALS_COLLECTION)
+            .whereEqualTo("patientId", patientId)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .limit(1)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                val reading = snapshot?.documents?.firstOrNull()?.toVitalReading()
+                if (reading != null) trySend(reading).isSuccess
+            }
+
+        awaitClose { registration.remove() }
     }
 
-    // Implemented missing method
     override suspend fun getVitalsHistory(patientId: String): Flow<List<VitalReading>> = flow {
-        // patientId is unused in this mock implementation
-        val history = (0..20).map {
-            VitalReading(
-                heartRate = Random.Default.nextInt(60, 110),
-                spo2 = Random.Default.nextInt(95, 100),
-                stressLevel = Random.Default.nextInt(10, 80)
-            )
-        }
-        emit(history)
+        val snapshot = firestore.collection(VITALS_COLLECTION)
+            .whereEqualTo("patientId", patientId)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .get()
+            .await()
+        emit(snapshot.documents.mapNotNull { it.toVitalReading() })
     }
 
-    // Implemented missing method
     override suspend fun getMedications(patientId: String): Flow<List<Medication>> = flow {
-        // patientId is unused in this mock implementation
-        // For now, returning an empty list. You can add mock medications here.
-        emit(emptyList<Medication>())
+        emit(emptyList())
     }
 
     override suspend fun getPatientByToken(token: String): AppUser? {
@@ -57,4 +60,50 @@ class PatientRepositoryImpl @Inject constructor() : PatientRepository {
             null
         }
     }
+}
+
+private fun com.google.firebase.firestore.DocumentSnapshot.toVitalReading(): VitalReading? {
+    val data = data ?: return null
+    val heartRate = data["heartRate"].toIntOrNull() ?: 0
+    val spo2 = data["spo2"].toIntOrNull() ?: 0
+    val stress = data["stressLevel"].toIntOrNull() ?: estimateStressLevel(heartRate, data["heartRateVariability"].toDoubleOrNull())
+    return VitalReading(
+        heartRate = heartRate,
+        spo2 = spo2,
+        stressLevel = stress,
+        id = id,
+        patientId = data["patientId"] as? String ?: "",
+        timestamp = data["timestamp"].toLongOrNull() ?: System.currentTimeMillis(),
+        bodyBattery = data["bodyBattery"].toIntOrNull() ?: 0,
+        deviceSource = data["deviceSource"] as? String ?: "HealthConnect"
+    )
+}
+
+private fun Any?.toIntOrNull(): Int? = when (this) {
+    is Int -> this
+    is Long -> toInt()
+    is Double -> toInt()
+    else -> null
+}
+
+private fun Any?.toLongOrNull(): Long? = when (this) {
+    is Long -> this
+    is Int -> toLong()
+    is Double -> toLong()
+    else -> null
+}
+
+private fun Any?.toDoubleOrNull(): Double? = when (this) {
+    is Double -> this
+    is Float -> toDouble()
+    is Long -> toDouble()
+    is Int -> toDouble()
+    else -> null
+}
+
+private fun estimateStressLevel(heartRate: Int, heartRateVariability: Double?): Int {
+    if (heartRate == 0 && heartRateVariability == null) return 0
+    val normalizedHr = heartRate.coerceIn(50, 140)
+    val hrvPenalty = (100 - (heartRateVariability ?: 50.0)).coerceIn(0.0, 100.0)
+    return (((normalizedHr - 50) / 90.0) * 60 + hrvPenalty * 0.4).toInt().coerceIn(0, 100)
 }

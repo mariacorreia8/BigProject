@@ -2,37 +2,47 @@ package com.example.bigproject.core.data.repositories
 
 import com.example.bigproject.core.domain.model.StressAlert
 import com.example.bigproject.core.domain.repository.AlertRepository
+import com.example.bigproject.core.domain.repository.AuthRepository
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.bearerAuth
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class AlertRepositoryImpl @Inject constructor() : AlertRepository {
+@Singleton
+class AlertRepositoryImpl @Inject constructor(
+    private val httpClient: HttpClient,
+    private val authRepository: AuthRepository,
+    private val apiBaseUrl: String
+) : AlertRepository {
+
     override suspend fun sendStressAlert(alert: StressAlert) {
-        // In a real implementation, this would send the alert to a remote server.
-        // For now, we'll just print it to the console.
-        println("Sending stress alert: $alert")
+        val token = authRepository.getToken() ?: return
+        httpClient.post("$apiBaseUrl/patients/${alert.patientId}/alerts") {
+            bearerAuth(token)
+            contentType(ContentType.Application.Json)
+            setBody(mapOf(
+                "severity" to alert.severity,
+                "message" to alert.message
+            ))
+        }
     }
 
-    override suspend fun getStressAlerts(patientId: String): Flow<List<StressAlert>> = flow {
-        // patientId is unused in this mock implementation
-        val alerts = listOf(
-            StressAlert(
-                id = "1",
-                patientId = patientId,
-                timestamp = System.currentTimeMillis() - 10000,
-                severity = 8,
-                message = "High stress detected after lunch.",
-                acknowledged = false
-            ),
-            StressAlert(
-                id = "2",
-                patientId = patientId,
-                timestamp = System.currentTimeMillis() - 200000,
-                severity = 6,
-                message = "Moderate stress during morning meeting.",
-                acknowledged = true
-            )
-        )
-        emit(alerts)
+    override fun getStressAlerts(patientId: String): Flow<List<StressAlert>> = flow {
+        val token = authRepository.getToken() ?: return@flow
+        val response: AlertsResponse = httpClient.get("$apiBaseUrl/patients/$patientId/alerts") {
+            bearerAuth(token)
+        }.body()
+        emit(response.alerts)
     }
 }
+
+@kotlinx.serialization.Serializable
+private data class AlertsResponse(val alerts: List<StressAlert>)

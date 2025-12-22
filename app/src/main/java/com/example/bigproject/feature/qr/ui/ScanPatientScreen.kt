@@ -24,6 +24,7 @@ import io.ktor.http.contentType
 fun ScanPatientScreen(
     authViewModel: AuthViewModel,
     client: HttpClient,
+    apiBaseUrl: String,
     onPatientFound: (String, String, VitalReading?) -> Unit,
     onPatientNotFound: () -> Unit
 ) {

@@ -1,5 +1,6 @@
 package com.example.bigproject.feature.dashboard.ui.patient
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,6 +31,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.bigproject.core.domain.model.VitalReading
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import com.example.bigproject.data.healthconnect.HealthConnectAvailability
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +48,37 @@ fun PatientHomeScreen(
     onLogoutClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current // Get the context here, in the composable's body
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = viewModel.healthPermissionContract,
+        onResult = { granted -> viewModel.onHealthPermissionsResult(granted) }
+    )
+
+    val onHealthConnectAction = remember(uiState.healthConnectAction, uiState.healthConnectAvailability) {
+        {
+            viewModel.onHealthConnectCtaClicked(
+                launchPermissions = { permissionLauncher.launch(it) },
+                context = context
+            )
+        }
+    }
+
+    LaunchedEffect(uiState.healthConnectMessage) {
+        uiState.healthConnectMessage?.let { message ->
+            snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Short)
+        }
+    }
+
+    // Auto-request Health Connect permissions on first load if not granted
+    LaunchedEffect(uiState.healthConnectAvailability) {
+        if (viewModel.shouldTriggerPermissionRequest()) {
+            viewModel.setShouldAutoRequestPermissions(false) // Reset flag to avoid repeated requests
+            permissionLauncher.launch(viewModel.healthConnectPermissions)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -55,6 +93,7 @@ fun PatientHomeScreen(
                 }
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
@@ -80,7 +119,11 @@ fun PatientHomeScreen(
             Spacer(Modifier.height(24.dp))
 
             // Vitals
-            VitalsSummaryCard(vitals = uiState.vitals, isLoading = uiState.isLoading)
+            VitalsSummaryCard(
+                vitals = uiState.vitals,
+                isLoading = uiState.isLoading,
+                timestampLabel = uiState.latestVitalsTimestampLabel
+            )
 
             Spacer(Modifier.height(16.dp))
 
@@ -95,9 +138,22 @@ fun PatientHomeScreen(
                 onDigitalTwinClick = { /* TODO */ },
                 onHistoryClick = { /* TODO */ },
                 onShowQrClick = { navController.navigate("patient/show_qr_code") },
-                onSyncHealthConnectClick = {
+                healthConnectAvailability = uiState.healthConnectAvailability,
+                isCheckingHealthConnect = uiState.isCheckingHealthConnect,
+                healthConnectCtaLabel = uiState.healthConnectCtaLabel,
+                healthConnectCtaEnabled = uiState.isHealthConnectCtaEnabled,
+                onHealthConnectCtaClick = onHealthConnectAction,
+                shouldShowHealthConnectInfo = uiState.shouldShowHealthConnectInfo
+            )
+        }
 
-                    viewModel.onSyncHealthConnectNow(context)
+        if (uiState.stressAlertDialog.visible) {
+            StressAlertDialog(
+                state = uiState.stressAlertDialog,
+                onDismiss = viewModel::dismissStressDialog,
+                onBreathingExercise = {
+                    viewModel.startBreathingExercise()
+                    navController.navigate("patient/breathing")
                 }
             )
         }
@@ -108,6 +164,7 @@ fun PatientHomeScreen(
 fun VitalsSummaryCard(
     vitals: VitalReading?,
     isLoading: Boolean = false,
+    timestampLabel: String = "",
 ) {
     Surface(
         shape = RoundedCornerShape(24.dp),
@@ -123,6 +180,15 @@ fun VitalsSummaryCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
+
+            if (timestampLabel.isNotBlank()) {
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = timestampLabel,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
 
             Spacer(Modifier.height(16.dp))
 
@@ -213,7 +279,12 @@ fun PatientActionsSection(
     onDigitalTwinClick: () -> Unit,
     onHistoryClick: () -> Unit,
     onShowQrClick: () -> Unit,
-    onSyncHealthConnectClick: () -> Unit
+    healthConnectAvailability: HealthConnectAvailability?,
+    isCheckingHealthConnect: Boolean,
+    healthConnectCtaLabel: String,
+    healthConnectCtaEnabled: Boolean,
+    onHealthConnectCtaClick: () -> Unit,
+    shouldShowHealthConnectInfo: Boolean
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(
@@ -242,9 +313,17 @@ fun PatientActionsSection(
             onClick = onShowQrClick
         )
 
+        if (shouldShowHealthConnectInfo || isCheckingHealthConnect) {
+            HealthConnectStatusInfo(
+                availability = healthConnectAvailability,
+                isChecking = isCheckingHealthConnect
+            )
+        }
+
         // Botão de Sincronização Health Connect
         Button(
-            onClick = onSyncHealthConnectClick,
+            onClick = onHealthConnectCtaClick,
+            enabled = healthConnectCtaEnabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -261,7 +340,7 @@ fun PatientActionsSection(
             )
             Spacer(Modifier.width(8.dp))
             Text(
-                text = "Sincronizar Health Connect",
+                text = healthConnectCtaLabel,
                 style = MaterialTheme.typography.labelLarge
             )
         }
@@ -289,5 +368,101 @@ fun PatientActionButton(
             style = MaterialTheme.typography.labelLarge,
             maxLines = 1
         )
+    }
+}
+
+@Composable
+private fun HealthConnectStatusInfo(
+    availability: HealthConnectAvailability?,
+    isChecking: Boolean
+) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        tonalElevation = 4.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val title: String
+            val body: String
+            when {
+                isChecking -> {
+                    title = "A verificar Health Connect"
+                    body = "Estamos a verificar o estado do Health Connect..."
+                }
+                availability == HealthConnectAvailability.NotInstalled -> {
+                    title = "Instale o Health Connect"
+                    body = "É necessário instalar o Health Connect para sincronizar os sinais vitais."
+                }
+                availability == HealthConnectAvailability.PermissionsNotGranted -> {
+                    title = "Permissões necessárias"
+                    body = "Conceda acesso ao Health Connect para lermos o seu ritmo cardíaco, SpO₂ e HRV."
+                }
+                availability == HealthConnectAvailability.NotSupported -> {
+                    title = "Health Connect indisponível"
+                    body = "Este dispositivo não suporta o Health Connect."
+                }
+                else -> {
+                    title = "Health Connect"
+                    body = "Estado desconhecido."
+                }
+            }
+
+            Text(text = title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(text = body, style = MaterialTheme.typography.bodyMedium)
+
+            if (isChecking) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun StressAlertDialog(
+    state: StressAlertDialogState,
+    onDismiss: () -> Unit,
+    onBreathingExercise: () -> Unit
+) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Stress elevado") },
+        text = {
+            Column {
+                Text(text = state.message)
+                Spacer(Modifier.height(8.dp))
+                Text(text = "Severidade: ${state.severity}")
+            }
+        },
+        confirmButton = {
+            Button(onClick = onBreathingExercise) {
+                Text(text = "Exercício de respiração")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = "Dispensar")
+            }
+        }
+    )
+}
+
+private fun openHealthConnectOrStore(context: android.content.Context) {
+    val intent = context.packageManager.getLaunchIntentForPackage("com.google.android.apps.healthdata")
+    if (intent != null) {
+        context.startActivity(intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK))
+    } else {
+        val marketIntent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+            data = android.net.Uri.parse("market://details?id=com.google.android.apps.healthdata")
+            addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(marketIntent)
     }
 }

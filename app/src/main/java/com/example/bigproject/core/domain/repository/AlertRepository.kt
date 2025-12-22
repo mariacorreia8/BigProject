@@ -5,5 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface AlertRepository {
     suspend fun sendStressAlert(alert: StressAlert)
-    suspend fun getStressAlerts(patientId: String): Flow<List<StressAlert>>
+    fun getStressAlerts(patientId: String): Flow<List<StressAlert>>
 }
