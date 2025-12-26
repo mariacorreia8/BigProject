@@ -7,6 +7,7 @@ import com.example.bigproject.core.domain.repository.NurseHomeRepository
 import com.example.bigproject.core.data.repositories.NurseHomeRepositoryImpl
 import com.example.bigproject.core.domain.repository.AuthRepository
 import com.example.bigproject.core.domain.stress.StressThresholdConfig
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
@@ -33,6 +34,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideNurseHomeRepository(impl: NurseHomeRepositoryImpl): NurseHomeRepository = impl
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
     @Provides
     @Singleton
