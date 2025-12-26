@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.bigproject.data.healthconnect.HealthConnectVitalsRepository
 import com.example.bigproject.data.healthconnect.HealthConnectAvailability
 import com.example.bigproject.data.firebase.FirebaseVitalsRepository
-import com.example.bigproject.models.VitalReading
+import com.example.bigproject.data.model.VitalReading
 import java.time.Instant
 import javax.inject.Inject
 

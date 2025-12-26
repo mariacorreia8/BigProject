@@ -3,7 +3,7 @@ package com.example.bigproject.data.healthconnect
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.HeartRateVariabilityRmssdRecord
 import androidx.health.connect.client.records.OxygenSaturationRecord
-import com.example.bigproject.models.VitalReading
+import com.example.bigproject.data.model.VitalReading
 
 /**
  * Mapper helpers to convert Health Connect SDK records to our domain model.

@@ -13,7 +13,7 @@ import androidx.health.connect.client.records.HeartRateVariabilityRmssdRecord
 import androidx.health.connect.client.records.OxygenSaturationRecord
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
-import com.example.bigproject.models.VitalReading
+import com.example.bigproject.data.model.VitalReading
 import com.example.bigproject.data.healthconnect.HealthConnectMappers
 
 import java.time.Instant
