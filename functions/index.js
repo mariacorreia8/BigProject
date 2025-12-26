@@ -239,9 +239,23 @@ app.post("/auth/login", async (req, res) => {
       }
     }
 
-    const userDoc = await getUserDocByUid(uid);
+    let userDoc = await getUserDocByUid(uid);
     if (!userDoc) {
-      return res.status(404).json({ error: "User doc not found" });
+      // User exists in Auth but not in Firestore - create a basic document
+      // Get user info from Firebase Auth
+      const authUser = await admin.auth().getUser(uid);
+      const defaultUserData = {
+        id: uid,
+        name: authUser.displayName || authUser.email?.split("@")[0] || "User",
+        email: authUser.email || email,
+        role: "Patient", // Default role, can be updated later
+        createdAt: Timestamp.now(),
+        nurseIds: [],
+        usesHealthConnect: false,
+      };
+      
+      await db.collection("users").doc(uid).set(defaultUserData);
+      userDoc = defaultUserData;
     }
 
     return res.json({ idToken, user: userDoc });

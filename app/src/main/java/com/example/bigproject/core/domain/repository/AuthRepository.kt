@@ -11,4 +11,10 @@ interface AuthRepository {
     fun getMessagingToken(): String?
     suspend fun createSessionToken(): Result<String>
     fun clear()
+    
+    // Firebase Auth methods
+    suspend fun registerWithEmailAndPassword(email: String, password: String, name: String, role: String): Result<AppUser>
+    suspend fun loginWithEmailAndPassword(email: String, password: String): Result<AppUser>
+    suspend fun getCurrentFirebaseUser(): AppUser?
+    fun signOut()
 }

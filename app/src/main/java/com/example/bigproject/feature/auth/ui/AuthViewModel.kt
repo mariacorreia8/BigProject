@@ -9,24 +9,15 @@ import com.example.bigproject.core.domain.model.user.UserRole
 import com.example.bigproject.core.domain.repository.AuthRepository
 import com.example.bigproject.core.domain.repository.MessagingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val client: HttpClient,
-    private val messagingRepository: MessagingRepository,
-    private val apiBaseUrl: String
+    private val messagingRepository: MessagingRepository
 ) : ViewModel() {
 
 
@@ -41,7 +32,9 @@ class AuthViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _userData.value = authRepository.getCurrentUser()
+            // Try to get from Firebase Auth first, fallback to stored user
+            _userData.value = authRepository.getCurrentFirebaseUser() 
+                ?: authRepository.getCurrentUser()
         }
     }
 
@@ -50,53 +43,36 @@ class AuthViewModel @Inject constructor(
     fun register(email: String, password: String, name: String, role: String) {
         viewModelScope.launch {
             _registerState.value = RegisterState.Loading
-            try {
-                val response: ApiAuthResponse = client.post("$apiBaseUrl/auth/register") {
-                    contentType(ContentType.Application.Json)
-                    setBody(mapOf(
-                        "email" to email,
-                        "password" to password,
-                        "name" to name,
-                        "role" to role
-                    ))
-                }.body()
-
-                authRepository.saveToken(response.idToken)
-                val user = response.user.toAppUser()
-                authRepository.saveUser(user)
-                _userData.value = user
-                registerMessagingToken()
-                _registerState.value = RegisterState.Success
-                _loginState.value = LoginState.Success
-            } catch (e: Exception) {
-                _registerState.value = RegisterState.Error(e.message ?: "Falha no registo")
+            val result = authRepository.registerWithEmailAndPassword(email, password, name, role)
+            result.getOrElse { error ->
+                _registerState.value = RegisterState.Error(error.message ?: "Falha no registo")
+                return@launch
             }
+            val user = result.getOrNull()!!
+            _userData.value = user
+            registerMessagingToken()
+            _registerState.value = RegisterState.Success
+            _loginState.value = LoginState.Success
         }
     }
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
-            try {
-                val response: ApiAuthResponse = client.post("$apiBaseUrl/auth/login") {
-                    contentType(ContentType.Application.Json)
-                    setBody(mapOf("email" to email, "password" to password))
-                }.body()
-
-                authRepository.saveToken(response.idToken)
-                val user = response.user.toAppUser()
-                authRepository.saveUser(user)
-                _userData.value = user
-                registerMessagingToken()
-                _loginState.value = LoginState.Success
-            } catch (e: Exception) {
-                _loginState.value = LoginState.Error(e.message ?: "Falha no login")
+            val result = authRepository.loginWithEmailAndPassword(email, password)
+            result.getOrElse { error ->
+                _loginState.value = LoginState.Error(error.message ?: "Falha no login")
+                return@launch
             }
+            val user = result.getOrNull()!!
+            _userData.value = user
+            registerMessagingToken()
+            _loginState.value = LoginState.Success
         }
     }
 
     fun logout() {
-        authRepository.clear()
+        authRepository.signOut()
         _userData.value = null
         _loginState.value = LoginState.Idle
         _registerState.value = RegisterState.Idle
@@ -113,26 +89,6 @@ class AuthViewModel @Inject constructor(
     }
 }
 
-@Serializable
-data class ApiAuthResponse(
-    val idToken: String,
-    val user: ApiUserData
-)
-
-@Serializable
-data class ApiUserData(
-    val id: String,
-    val name: String,
-    val email: String,
-    val role: String
-) {
-    fun toAppUser(): AppUser {
-        return when (UserRole.valueOf(role)) {
-            UserRole.Patient -> Patient(id = id, name = name, email = email)
-            UserRole.Nurse -> Nurse(id = id, name = name, email = email)
-        }
-    }
-}
 
 sealed class LoginState {
     object Idle : LoginState()
