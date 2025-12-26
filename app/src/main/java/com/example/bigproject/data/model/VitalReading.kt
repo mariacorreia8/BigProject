@@ -1,4 +1,4 @@
-package com.example.bigproject.models
+package com.example.bigproject.data.model
 
 data class VitalReading(
     val id: String = "",

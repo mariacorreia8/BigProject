@@ -6,18 +6,23 @@ import com.example.bigproject.core.domain.repository.AuthRepository
 import com.example.bigproject.core.domain.repository.NurseHomeRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
+
 @Serializable
 data class ResolveQrTokenRequest(val qrToken: String)
+
+@Serializable
+private data class NursePatientsResponse(val patients: List<Patient> = emptyList())
 
 class NurseHomeRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -27,21 +32,15 @@ class NurseHomeRepositoryImpl @Inject constructor(
 ) : NurseHomeRepository {
 
     override suspend fun getPatients(): List<Patient> {
-        return try {
-            val snapshot = firestore.collection("users")
-                .whereEqualTo("role", "Patient")
-                .get()
-                .await()
+        val token = authRepository.getToken() ?: return emptyList()
+        val currentUser = authRepository.getCurrentUser() ?: return emptyList()
 
-            snapshot.documents.mapNotNull { doc ->
-                doc.getString("id")?.let {
-                    Patient(
-                        id = it,
-                        name = doc.getString("name") ?: "",
-                        email = doc.getString("email") ?: ""
-                    )
-                }
-            }
+        return try {
+            val response: NursePatientsResponse = httpClient.get("$apiBaseUrl/nurses/${currentUser.id}/patients") {
+                bearerAuth(token)
+            }.body()
+
+            response.patients
         } catch (e: Exception) {
             emptyList()
         }

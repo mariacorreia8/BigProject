@@ -1,6 +1,6 @@
 package com.example.bigproject.data.healthconnect
 
-import com.example.bigproject.models.VitalReading
+import com.example.bigproject.data.model.VitalReading
 import java.time.Instant
 import javax.inject.Inject
 

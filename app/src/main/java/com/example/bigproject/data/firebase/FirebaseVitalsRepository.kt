@@ -1,6 +1,6 @@
 package com.example.bigproject.data.firebase
 
-import com.example.bigproject.models.VitalReading
+import com.example.bigproject.data.model.VitalReading
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
